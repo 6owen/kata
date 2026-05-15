@@ -1,0 +1,19 @@
+{
+  "name": "kata-test",
+  "description": "Testing workflow plugin skeleton for Kata. Unit, integration, and end-to-end skills will be added later.",
+  "version": "0.1.0",
+  "author": {
+    "name": "pinky-pig"
+  },
+  "homepage": "https://github.com/pinky-pig/kata",
+  "repository": "https://github.com/pinky-pig/kata",
+  "license": "MIT",
+  "keywords": [
+    "kata",
+    "skills",
+    "testing",
+    "unit-test",
+    "integration-test",
+    "e2e"
+  ]
+}

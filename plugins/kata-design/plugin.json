@@ -1,0 +1,19 @@
+{
+  "name": "kata-design",
+  "description": "Design workflow orchestration skills for Kata, with external companion integration for impeccable.",
+  "version": "0.1.0",
+  "author": {
+    "name": "pinky-pig"
+  },
+  "homepage": "https://github.com/pinky-pig/kata",
+  "repository": "https://github.com/pinky-pig/kata",
+  "license": "MIT",
+  "keywords": [
+    "kata",
+    "skills",
+    "design",
+    "ui",
+    "frontend",
+    "impeccable"
+  ]
+}
