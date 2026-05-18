@@ -26,6 +26,7 @@ Use this skill when the task is primarily about frontend page design, UI refinem
 ## Rules
 
 - `kata-design` does not vendor, fork, or mirror `impeccable`
+- the upstream repository may be tracked locally as `vendor/impeccable` for integration/reference only
 - `impeccable` remains an external companion plugin with its own release cycle
 - design quality decisions should be delegated outward when the external plugin is available
 - codebase integration decisions remain owned by Kata

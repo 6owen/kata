@@ -6,6 +6,13 @@
 - `kata-design`：设计流程编排，推荐与外部 `impeccable` plugin 搭配使用
 - `kata-test`：测试能力预留骨架，后续补充 skill
 
+仓库本身不再尝试内置所有配置包。已有独立维护的配置仓库继续作为外部依赖使用，例如：
+
+- [6owen/eslint-config](https://github.com/6owen/eslint-config)
+- [6owen/prettier-config](https://github.com/6owen/prettier-config)
+
+第三方 skill 则通过 `vendor/ + .gitmodules + meta.ts` 接入。
+
 ## 安装
 
 安装整个插件仓库：
@@ -38,7 +45,7 @@ npx plugins add pbakaus/impeccable
 ### `kata-code`
 
 - `project-toolchain`
-  - 为 `pnpm` JavaScript/TypeScript 项目接入：
+  - 为 `pnpm` JavaScript/TypeScript 项目接入外部配置包：
     - `@arvinn/eslint-config`
     - `@arvinn/prettier-config`
     - `@arvinn/vscode-settings`
@@ -68,6 +75,7 @@ npx plugins add pbakaus/impeccable
   - 作为 `kata` 的设计流程入口
   - 推荐将视觉设计、页面 polish、critique、audit 任务交给外部 `impeccable`
   - `kata-design` 只定义集成方式与落地约束，不维护 `impeccable` 副本
+  - 上游源码通过 `vendor/impeccable` submodule 跟踪
 
 ### `kata-test`
 
@@ -81,12 +89,10 @@ kata/
   apps/
     browser-extension/
     web/
-  packages/
-    eslint-config/
-    prettier-config/
-    shared/
-    tsconfig/
-    vscode-settings/
+  vendor/
+    impeccable/
+  .gitmodules
+  meta.ts
   plugins/
     kata-code/
     kata-design/

@@ -16,6 +16,8 @@ npx plugins add pbakaus/impeccable
 - 规定设计完成后如何回到 `kata` 的工程与落地约束
 - 提供未安装 `impeccable` 时的基础降级规则
 
+上游源码通过 `vendor/impeccable` submodule 跟踪，仅用于集成和参考，不在本仓库内维护其实现。
+
 ## Skills
 
 - `impeccable-integration`

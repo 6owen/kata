@@ -1,6 +1,6 @@
 ---
 name: project-toolchain
-description: Set up a pnpm JavaScript/TypeScript project with Arvinn's prettier, eslint, and VS Code conventions, including package.json scripts, lint-staged, simple-git-hooks, and an eslint.config.ts starter. Use when initializing a new project or aligning an existing project to this toolchain.
+description: Set up a pnpm JavaScript/TypeScript project with Arvinn's external prettier, eslint, and VS Code conventions, including package.json scripts, lint-staged, simple-git-hooks, and an eslint.config.ts starter. Use when initializing a new project or aligning an existing project to this toolchain.
 ---
 
 # Project Toolchain
@@ -23,6 +23,9 @@ Apply Arvinn's default frontend tooling to the current project.
   - `@arvinn/vscode-settings`
   - `lint-staged`
   - `simple-git-hooks`
+- These config packages stay in their own repositories:
+  - `@arvinn/eslint-config`: `https://github.com/6owen/eslint-config.git`
+  - `@arvinn/prettier-config`: `https://github.com/6owen/prettier-config.git`
 - Merges `package.json` with:
   - `scripts.setup-arvin`
   - `scripts.prepare` including `simple-git-hooks`
@@ -38,3 +41,4 @@ Apply Arvinn's default frontend tooling to the current project.
 - This skill is intentionally `pnpm`-only.
 - The script is idempotent for repeated runs.
 - If overwrite is declined for `eslint.config.ts`, existing file is kept unchanged.
+- Kata consumes these packages as external dependencies rather than vendoring their source.
