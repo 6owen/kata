@@ -1,10 +1,24 @@
 #!/usr/bin/env node
 
+/*
+[INPUT]: 目标项目根目录、pnpm 环境、现有 Tailwind 配置文件、全局 CSS 入口与 package.json 依赖。
+[OUTPUT]: 对目标项目安装 Iconify 依赖，并改写 Tailwind 配置与 CSS 指令。
+[POS]: 位于 /plugins/kata-code/skills/tailwind-iconify/scripts，作为 tailwind-iconify skill 的执行入口。
+
+[PROTOCOL]:
+1. 一旦本文件逻辑、支持格式或配置写入策略变化，必须同步更新此 Header。
+2. 更新后必须上浮检查所属目录 `.folder.md`、上层 `SKILL.md` 与 `README.md` 的描述是否依然准确。
+*/
+
 import { spawnSync } from 'node:child_process'
 import { constants } from 'node:fs'
 import { access, readFile, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import process from 'node:process'
+
+/* ==========================================================================
+ * Constants
+ * ========================================================================== */
 
 const ICON_PLUGIN_IMPORT = "import { getIconCollections, iconsPlugin } from '@egoist/tailwindcss-icons'"
 
@@ -32,6 +46,10 @@ const CSS_CANDIDATES = [
   'app.css',
   'global.css',
 ]
+
+/* ==========================================================================
+ * Shell And Fs Helpers
+ * ========================================================================== */
 
 function run(command, args, options = {}) {
   const result = spawnSync(command, args, {
@@ -69,6 +87,10 @@ async function findFirstExisting(paths) {
   return null
 }
 
+/* ==========================================================================
+ * Preconditions
+ * ========================================================================== */
+
 function parseMajor(versionRange) {
   if (!versionRange)
     return null
@@ -101,6 +123,10 @@ async function ensurePreconditions() {
   if (major === null || major < 4)
     throw new Error(`tailwindcss v4+ is required. Current: ${tailwindVersion}`)
 }
+
+/* ==========================================================================
+ * Tailwind Config Mutation
+ * ========================================================================== */
 
 function ensureImport(content) {
   if (content.includes(ICON_PLUGIN_IMPORT))
@@ -156,6 +182,10 @@ async function ensureTailwindConfig() {
 
   return configPath
 }
+
+/* ==========================================================================
+ * Css Directive Mutation
+ * ========================================================================== */
 
 function normalizeRelativeForCss(fromDir, toFile) {
   let rel = path.relative(fromDir, toFile).replace(/\\/g, '/')

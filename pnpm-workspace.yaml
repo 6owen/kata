@@ -1,3 +1,10 @@
+# [INPUT]: 仓库下 app 与 plugin workspace 路径约束。
+# [OUTPUT]: pnpm workspace 包含范围。
+# [POS]: 位于仓库根目录，作为 monorepo 包发现边界声明。
+#
+# [PROTOCOL]:
+# 1. 一旦 workspace 包含范围变化，必须同步更新此 Header。
+# 2. 更新后必须上浮检查 /README.md、/AGENTS.md 与相关目录 `.folder.md` 是否依然准确。
 packages:
   - 'apps/*'
   - 'plugins/*'

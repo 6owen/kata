@@ -1,9 +1,23 @@
 #!/usr/bin/env node
 
+/*
+[INPUT]: 目标项目根目录、pnpm 环境、现有 package.json、可选模块名参数。
+[OUTPUT]: 对目标项目安装 Express TypeScript 依赖，并生成模块化后端基础结构与样板文件。
+[POS]: 位于 /plugins/kata-code/skills/express-modular/scripts，作为 express-modular skill 的执行入口。
+
+[PROTOCOL]:
+1. 一旦本文件逻辑、生成结构或依赖策略变化，必须同步更新此 Header。
+2. 更新后必须上浮检查所属目录 `.folder.md`、上层 `SKILL.md` 与 `README.md` 的描述是否依然准确。
+*/
+
 import { spawnSync } from 'node:child_process'
 import { constants } from 'node:fs'
 import { access, mkdir, readFile, writeFile } from 'node:fs/promises'
 import process from 'node:process'
+
+/* ==========================================================================
+ * Constants
+ * ========================================================================== */
 
 const BASE_DIRS = [
   'src/common/errors',
@@ -22,6 +36,10 @@ const BASE_DIRS = [
 
 const RUNTIME_DEPS = ['express', 'cors', 'zod']
 const DEV_DEPS = ['typescript', 'tsx', '@types/node', '@types/express', '@types/cors']
+
+/* ==========================================================================
+ * Shell And Fs Helpers
+ * ========================================================================== */
 
 function run(command, args, options = {}) {
   const result = spawnSync(command, args, {
@@ -79,6 +97,10 @@ async function writeJson(path, value) {
   await writeFile(path, `${JSON.stringify(value, null, 2)}\n`, 'utf8')
 }
 
+/* ==========================================================================
+ * Package And Tsconfig
+ * ========================================================================== */
+
 function ensureScripts(pkg) {
   pkg.scripts = pkg.scripts && typeof pkg.scripts === 'object' && !Array.isArray(pkg.scripts)
     ? pkg.scripts
@@ -130,6 +152,10 @@ async function ensureTsconfig() {
 
   await ensureFile('tsconfig.json', content)
 }
+
+/* ==========================================================================
+ * Base File Generation
+ * ========================================================================== */
 
 async function ensureBaseFiles() {
   const files = {

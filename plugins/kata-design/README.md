@@ -1,3 +1,13 @@
+<!--
+[INPUT]: `kata-design` plugin 的定位、companion plugin 集成边界与 skill 清单。
+[OUTPUT]: 面向人类的 `kata-design` plugin 总览说明。
+[POS]: 位于 /plugins/kata-design，作为设计编排 plugin 的入口文档。
+
+[PROTOCOL]:
+1. 一旦 plugin 定位、集成边界或 skill 清单变化，必须同步更新此 Header。
+2. 更新后必须上浮检查 /plugins/kata-design/.folder.md、/plugins/.folder.md 与 /README.md 的描述是否依然准确。
+-->
+
 # kata-design
 
 `kata-design` 负责设计流程编排，不维护视觉设计 skill 的上游副本。

@@ -1,11 +1,25 @@
 #!/usr/bin/env node
 
+/*
+[INPUT]: 目标项目根目录、pnpm 环境、现有 package.json、根目录文件布局、可选迁移模式参数。
+[OUTPUT]: 对目标项目建立或迁移 pnpm monorepo 结构，并维护 apps/web 与 workspace 根配置。
+[POS]: 位于 /plugins/kata-code/skills/pnpm-monorepo/scripts，作为 pnpm-monorepo skill 的执行入口。
+
+[PROTOCOL]:
+1. 一旦本文件逻辑、迁移策略或保留目录规则变化，必须同步更新此 Header。
+2. 更新后必须上浮检查所属目录 `.folder.md`、上层 `SKILL.md` 与 `README.md` 的描述是否依然准确。
+*/
+
 import { spawnSync } from 'node:child_process'
 import { constants } from 'node:fs'
 import { access, cp, mkdir, readFile, readdir, rename, rm, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import process from 'node:process'
 import readline from 'node:readline/promises'
+
+/* ==========================================================================
+ * Constants
+ * ========================================================================== */
 
 const ROOT_KEEP_ENTRIES = new Set([
   '.git',
@@ -29,6 +43,10 @@ const ROOT_SCRIPT_DEFAULTS = {
   'build:web': 'pnpm --filter web build',
   'start:web': 'pnpm --filter web start',
 }
+
+/* ==========================================================================
+ * Shell And Fs Helpers
+ * ========================================================================== */
 
 function run(command, args, options = {}) {
   const result = spawnSync(command, args, {
@@ -66,6 +84,10 @@ async function readJson(file) {
 async function writeJson(file, data) {
   await writeFile(file, `${JSON.stringify(data, null, 2)}\n`, 'utf8')
 }
+
+/* ==========================================================================
+ * Mode Detection
+ * ========================================================================== */
 
 function getModeArg() {
   const args = process.argv.slice(2)
@@ -111,6 +133,10 @@ async function hasFrontendRootFiles() {
 
   return false
 }
+
+/* ==========================================================================
+ * Init Mode
+ * ========================================================================== */
 
 function toWorkspaceRootName(oldName) {
   if (!oldName)
@@ -205,6 +231,10 @@ async function ensureInitMode() {
 
   await ensureWebPlaceholder()
 }
+
+/* ==========================================================================
+ * Migrate Mode
+ * ========================================================================== */
 
 async function askConfirmMove(entries) {
   if (process.env.PNPM_MONOREPO_ASSUME_YES === '1')

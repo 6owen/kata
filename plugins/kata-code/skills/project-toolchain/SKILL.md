@@ -3,6 +3,16 @@ name: project-toolchain
 description: Set up a pnpm JavaScript/TypeScript project with Arvinn's external prettier, eslint, and VS Code conventions, including package.json scripts, lint-staged, simple-git-hooks, and an eslint.config.ts starter. Use when initializing a new project or aligning an existing project to this toolchain.
 ---
 
+<!--
+[INPUT]: AI 任务上下文、目标项目根目录、pnpm 环境、外部配置包可用性。
+[OUTPUT]: 给 AI 的运行协议，以及对目标项目注入 Arvinn 工具链的明确步骤。
+[POS]: 位于 /plugins/kata-code/skills/project-toolchain，作为该 skill 的机器可读入口。
+
+[PROTOCOL]:
+1. 一旦 skill 工作流、依赖清单或写入策略变化，必须同步更新此 Header。
+2. 更新后必须上浮检查本目录 `.folder.md`、`README.md` 与 `scripts/apply-project-toolchain.mjs` 的描述是否依然准确。
+-->
+
 # Project Toolchain
 
 Apply Arvinn's default frontend tooling to the current project.

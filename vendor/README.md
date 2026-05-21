@@ -1,3 +1,13 @@
+<!--
+[INPUT]: 第三方 skill 来源、submodule 引用方式、vendor 工作流说明。
+[OUTPUT]: vendor 目录用途、默认状态与初始化/回退操作指南。
+[POS]: 位于 /vendor，作为外部来源接入方式的人类说明文档。
+
+[PROTOCOL]:
+1. 一旦 vendor 接入方式或上游来源变化，必须同步更新此 Header。
+2. 更新后必须上浮检查 /vendor/.folder.md、/README.md 与 /meta.ts 的描述是否依然准确。
+-->
+
 # Vendor Sources
 
 This directory tracks third-party skills as git submodules.

@@ -1,10 +1,24 @@
 #!/usr/bin/env node
 
+/*
+[INPUT]: 目标项目根目录、pnpm 与 npx 命令、现有 package.json / eslint.config.ts / .vscode 状态。
+[OUTPUT]: 对目标项目安装 Arvinn 工具链依赖，并改写 package.json、ESLint、hooks 与 VS Code 设置。
+[POS]: 位于 /plugins/kata-code/skills/project-toolchain/scripts，作为 project-toolchain skill 的执行入口。
+
+[PROTOCOL]:
+1. 一旦本文件逻辑、依赖或写入策略变化，必须同步更新此 Header。
+2. 更新后必须上浮检查所属目录 `.folder.md`、上层 `SKILL.md` 与 `README.md` 的描述是否依然准确。
+*/
+
 import { spawnSync } from 'node:child_process'
 import { constants } from 'node:fs'
 import { access, copyFile, readFile, writeFile } from 'node:fs/promises'
 import process from 'node:process'
 import readline from 'node:readline/promises'
+
+/* ==========================================================================
+ * Constants
+ * ========================================================================== */
 
 const DEV_DEPENDENCIES = [
   'eslint',
@@ -34,6 +48,10 @@ export default arvinn(
   },
 )
 `
+
+/* ==========================================================================
+ * Shell Helpers
+ * ========================================================================== */
 
 function run(command, args, options = {}) {
   const result = spawnSync(command, args, {
@@ -83,6 +101,10 @@ function updatePrepareScript(scripts) {
     scripts.prepare = `${prepare} && simple-git-hooks`
 }
 
+/* ==========================================================================
+ * Package Mutation
+ * ========================================================================== */
+
 async function updatePackageJson() {
   const raw = await readFile('package.json', 'utf8')
   const pkg = JSON.parse(raw)
@@ -101,6 +123,10 @@ async function updatePackageJson() {
 
   await writeFile('package.json', `${JSON.stringify(pkg, null, 2)}\n`, 'utf8')
 }
+
+/* ==========================================================================
+ * Interactive Overwrite Flow
+ * ========================================================================== */
 
 async function askForOverwrite(file) {
   if (
@@ -153,6 +179,10 @@ async function ensureEslintConfig() {
   await writeFile(file, ESLINT_TEMPLATE, 'utf8')
   console.log('Backed up eslint.config.ts to eslint.config.ts.bak and wrote Arvinn template')
 }
+
+/* ==========================================================================
+ * Preconditions And Entry
+ * ========================================================================== */
 
 function ensurePreconditions() {
   if (!hasPnpm())
