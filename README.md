@@ -58,6 +58,7 @@
 
 - `kata-code`：代码工程、工具链、目录结构、前后端实现偏好。
 - `kata-design`：设计流程编排，推荐与外部 `impeccable` plugin 搭配使用。
+- `kata-governance`：把 AI 治理规则安装到新仓库里的 bootstrap plugin。
 - `kata-test`：测试能力预留骨架，后续补充 skill。
 
 仓库不内置所有配置包。已有独立维护的配置仓库继续作为外部依赖使用，例如 [6owen/eslint-config](https://github.com/6owen/eslint-config) 与 [6owen/prettier-config](https://github.com/6owen/prettier-config)。第三方 skill 则通过 `vendor/ + .gitmodules + meta.ts` 接入。
@@ -102,6 +103,10 @@ npx plugins add pbakaus/impeccable
 
 - `impeccable-integration`：作为 `kata` 的设计流程入口，推荐把视觉设计、polish、critique、audit 交给外部 `impeccable`，本仓库只维护集成约束。
 
+### `kata-governance`
+
+- `repo-governance-bootstrap`：向目标仓库写入 `AGENTS.md`、`CLAUDE.md`、`ai-docs/`、根 README 治理段、目录 `.folder.md` 与文件 Header 基线。
+
 ### `kata-test`
 
 - 当前仅保留 plugin 骨架。
@@ -121,5 +126,6 @@ kata/
   plugins/
     kata-code/
     kata-design/
+    kata-governance/
     kata-test/
 ```

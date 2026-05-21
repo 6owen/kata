@@ -63,5 +63,6 @@ export const externalPackages: Record<string, ExternalPackageMeta> = {
 export const manualPlugins = [
   'kata-code',
   'kata-design',
+  'kata-governance',
   'kata-test',
 ]
