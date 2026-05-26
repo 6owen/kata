@@ -45,6 +45,10 @@ export default arvinn(
       'import/no-default-export': 'off',
       'import-x/no-default-export': 'off',
     },
+    {
+      name: 'local/ignores',
+      ignores: ['**/*.test.{ts,tsx,js,jsx}', '**/__tests__/**'],
+    },
   },
 )
 `
