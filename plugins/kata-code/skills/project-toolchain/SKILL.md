@@ -37,6 +37,11 @@ Apply Arvinn's default frontend tooling to the current project.
   - `@arvinn/eslint-config`: `https://github.com/6owen/eslint-config.git`
   - `@arvinn/prettier-config`: `https://github.com/6owen/prettier-config.git`
 - Merges `package.json` with:
+  - `scripts.format`
+  - `scripts.format:check`
+  - `scripts.lint`
+  - `scripts.lint:fix`
+  - `scripts.fix`
   - `scripts.setup-arvin`
   - `scripts.prepare` including `simple-git-hooks`
   - `prettier: "@arvinn/prettier-config"`
@@ -50,5 +55,6 @@ Apply Arvinn's default frontend tooling to the current project.
 
 - This skill is intentionally `pnpm`-only.
 - The script is idempotent for repeated runs.
+- Existing `format` / `lint` / `fix` scripts are preserved; the script only fills in these defaults when they are missing.
 - If overwrite is declined for `eslint.config.ts`, existing file is kept unchanged.
 - Kata consumes these packages as external dependencies rather than vendoring their source.

@@ -2,7 +2,7 @@
 
 /*
 [INPUT]: 目标项目根目录、pnpm 与 npx 命令、现有 package.json / eslint.config.ts / .vscode 状态。
-[OUTPUT]: 对目标项目安装 Arvinn 工具链依赖，并改写 package.json、ESLint、hooks 与 VS Code 设置。
+[OUTPUT]: 对目标项目安装 Arvinn 工具链依赖，并补齐 package.json、ESLint、hooks 与 VS Code 默认设置。
 [POS]: 位于 /plugins/kata-code/skills/project-toolchain/scripts，作为 project-toolchain skill 的执行入口。
 
 [PROTOCOL]:
@@ -105,6 +105,14 @@ function updatePrepareScript(scripts) {
     scripts.prepare = `${prepare} && simple-git-hooks`
 }
 
+function updateToolingScripts(scripts) {
+  scripts.format ??= 'prettier . --write --ignore-unknown'
+  scripts['format:check'] ??= 'prettier . --check --ignore-unknown'
+  scripts.lint ??= 'eslint .'
+  scripts['lint:fix'] ??= 'eslint . --fix'
+  scripts.fix ??= 'pnpm format && pnpm lint:fix'
+}
+
 /* ==========================================================================
  * Package Mutation
  * ========================================================================== */
@@ -116,6 +124,7 @@ async function updatePackageJson() {
   pkg.scripts = ensureObject(pkg.scripts)
   pkg.scripts['setup-arvin'] = SETUP_SCRIPT
   updatePrepareScript(pkg.scripts)
+  updateToolingScripts(pkg.scripts)
 
   pkg.prettier = '@arvinn/prettier-config'
 
