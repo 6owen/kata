@@ -10,6 +10,6 @@
 
 # project-toolchain
 
-Set up a pnpm JavaScript/TypeScript project with Arvinn's lint, format, and editor conventions from external config packages, including default `lint`, `format`, and `fix` scripts added to `package.json` when they are missing.
+Set up a pnpm JavaScript/TypeScript project with Arvinn's lint, format, editor, and dependency-maintenance conventions from external config packages, including default `lint`, `format`, `fix`, and `up` scripts added to `package.json` when they are missing.
 
 Main entry: `SKILL.md`

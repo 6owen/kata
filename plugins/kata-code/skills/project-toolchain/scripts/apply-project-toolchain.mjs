@@ -2,7 +2,7 @@
 
 /*
 [INPUT]: 目标项目根目录、pnpm 与 npx 命令、现有 package.json / eslint.config.ts / .vscode 状态。
-[OUTPUT]: 对目标项目安装 Arvinn 工具链依赖，并补齐 package.json、ESLint、hooks 与 VS Code 默认设置。
+[OUTPUT]: 对目标项目安装 Arvinn 工具链依赖，并补齐 package.json、依赖更新脚本、ESLint、hooks 与 VS Code 默认设置。
 [POS]: 位于 /plugins/kata-code/skills/project-toolchain/scripts，作为 project-toolchain skill 的执行入口。
 
 [PROTOCOL]:
@@ -22,6 +22,7 @@ import readline from 'node:readline/promises'
 
 const DEV_DEPENDENCIES = [
   'eslint',
+  'taze@^19.9.2',
   '@arvinn/eslint-config',
   '@arvinn/prettier-config',
   '@arvinn/vscode-settings',
@@ -111,6 +112,7 @@ function updateToolingScripts(scripts) {
   scripts.lint ??= 'eslint .'
   scripts['lint:fix'] ??= 'eslint . --fix'
   scripts.fix ??= 'pnpm format && pnpm lint:fix'
+  scripts.up ??= 'taze major -I'
 }
 
 /* ==========================================================================
