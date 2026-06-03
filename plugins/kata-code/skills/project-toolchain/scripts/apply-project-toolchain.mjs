@@ -112,7 +112,7 @@ function updateToolingScripts(scripts) {
   scripts.lint ??= 'eslint .'
   scripts['lint:fix'] ??= 'eslint . --fix'
   scripts.fix ??= 'pnpm format && pnpm lint:fix'
-  scripts.up ??= 'taze major -I'
+  scripts.up ??= 'taze major -r -I'
 }
 
 /* ==========================================================================
