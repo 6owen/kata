@@ -4,6 +4,14 @@
   "version": "0.1.1",
   "packageManager": "pnpm@10.33.0",
   "scripts": {
-    "check:meta": "echo \"No automated checks configured yet\""
+    "check:meta": "echo \"No automated checks configured yet\"",
+    "bump": "bumpp --configFilePath bump.config.ts",
+    "bump:local": "bumpp --configFilePath bump.config.ts --no-commit --no-tag --no-push"
+  },
+  "devDependencies": {
+    "@clack/prompts": "^1.5.1",
+    "bumpp": "^11.1.0",
+    "picocolors": "^1.1.1",
+    "sisteransi": "^1.0.5"
   }
 }

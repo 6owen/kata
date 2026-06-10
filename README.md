@@ -35,7 +35,10 @@
 - `README.md`：根目录主控文档；定义全局同步协议、根层索引与仓库总览。
 - `AGENTS.md`：AI 权威操作规约；约束文档同步、Header 协议与目录治理方式。
 - `CLAUDE.md`：Claude 兼容入口；将规则指向 `AGENTS.md`，避免双份治理。
-- `package.json`：JSON 例外文件；声明仓库包身份、包管理器版本与根级脚本入口。
+- `.gitignore`：根级忽略规则；过滤本地安装产物，避免把 `node_modules/` 纳入版本控制。
+- `package.json`：JSON 例外文件；声明仓库包身份、包管理器版本、根级脚本入口与根开发依赖。
+- `bump.config.ts`：仓库版本升级配置；统一定义根包与各 plugin `plugin.json` 的版本同步 bump 目标。
+- `pnpm-lock.yaml`：依赖锁定文件；固定根开发依赖及其传递依赖解析结果。
 - `pnpm-workspace.yaml`：workspace 边界声明；定义 `pnpm` 识别哪些子包路径。
 - `turbo.json`：JSON 例外文件；预留 Turborepo 任务编排配置入口。
 - `meta.ts`：代码化元数据源；维护 vendor、外部包与手写 plugin 的映射关系。
@@ -63,6 +66,8 @@
 
 仓库不内置所有配置包。已有独立维护的配置仓库继续作为外部依赖使用，例如 [6owen/eslint-config](https://github.com/6owen/eslint-config) 与 [6owen/prettier-config](https://github.com/6owen/prettier-config)。第三方 skill 则通过 `vendor/ + .gitmodules + meta.ts` 接入。
 
+根级开发工具额外使用 [@clack/prompts](https://github.com/bombshell-dev/clack) 作为 CLI 交互组件，使用 [picocolors](https://github.com/alexeyraspopov/picocolors) 与 [sisteransi](https://github.com/terkelg/sisteransi) 处理终端颜色和 ANSI 输出，并用 [bumpp](https://github.com/antfu-collective/bumpp) 统一维护根包与各 plugin 的版本号。
+
 ## 安装
 
 安装整个插件仓库：
@@ -88,6 +93,28 @@ npx skills add /Users/wangwenbo/Desktop/demo/dev-bootstrap/plugins/kata-code/ski
 ```bash
 npx plugins add /Users/wangwenbo/Desktop/demo/dev-bootstrap/plugins/kata-design
 npx plugins add pbakaus/impeccable
+```
+
+## 版本发布
+
+仓库根提供统一版本升级入口：
+
+```bash
+pnpm bump
+```
+
+它会读取根目录的 `bump.config.ts`，同步更新：
+
+- 根 `package.json`
+- `plugins/kata-code/plugin.json`
+- `plugins/kata-design/plugin.json`
+- `plugins/kata-governance/plugin.json`
+- `plugins/kata-test/plugin.json`
+
+只在本地更新版本文件、不 commit/tag/push 时：
+
+```bash
+pnpm bump:local
 ```
 
 ## 当前插件

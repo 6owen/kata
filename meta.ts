@@ -44,6 +44,26 @@ export const vendors: Record<string, VendorSkillMeta> = {
  * ========================================================================== */
 
 export const externalPackages: Record<string, ExternalPackageMeta> = {
+  bumpp: {
+    source: 'https://github.com/antfu-collective/bumpp',
+    packages: ['bumpp'],
+    usedBy: ['root/release'],
+  },
+  clack: {
+    source: 'https://github.com/bombshell-dev/clack',
+    packages: ['@clack/prompts'],
+    usedBy: ['root/devtools'],
+  },
+  picocolors: {
+    source: 'https://github.com/alexeyraspopov/picocolors',
+    packages: ['picocolors'],
+    usedBy: ['root/devtools'],
+  },
+  sisteransi: {
+    source: 'https://github.com/terkelg/sisteransi',
+    packages: ['sisteransi'],
+    usedBy: ['root/devtools'],
+  },
   'eslint-config': {
     source: 'https://github.com/6owen/eslint-config.git',
     packages: ['@arvinn/eslint-config'],
