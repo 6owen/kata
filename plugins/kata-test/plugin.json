@@ -1,7 +1,7 @@
 {
   "name": "kata-test",
   "description": "Testing workflow plugin skeleton for Kata. Unit, integration, and end-to-end skills will be added later.",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "author": {
     "name": "pinky-pig"
   },

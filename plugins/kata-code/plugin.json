@@ -1,7 +1,7 @@
 {
   "name": "kata-code",
   "description": "Code generation and engineering workflow skills for pnpm toolchains, monorepos, React/Vite starter baselines, backend structure, and frontend implementation preferences.",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "author": {
     "name": "pinky-pig"
   },
