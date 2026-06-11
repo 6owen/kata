@@ -130,6 +130,7 @@ pnpm bump:local
 ### `kata-design`
 
 - `impeccable-integration`：作为 `kata` 的设计流程入口，推荐把视觉设计、polish、critique、audit 交给外部 `impeccable`，本仓库只维护集成约束。
+- `website-to-design-md`：使用浏览器自动化深读实时网站，输出可复用的 `DESIGN.md` 与配套 HTML 预览。
 
 ### `kata-governance`
 

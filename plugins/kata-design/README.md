@@ -31,3 +31,4 @@ npx plugins add pbakaus/impeccable
 ## Skills
 
 - `impeccable-integration`
+- `website-to-design-md`

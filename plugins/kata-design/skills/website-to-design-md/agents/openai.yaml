@@ -1,0 +1,8 @@
+# INPUT: `website-to-design-md` skill 的展示名、简述与默认调用提示。
+# OUTPUT: 提供 OpenAI agent 侧的界面文案与默认 prompt 配置。
+# POS: 位于 `/plugins/kata-design/skills/website-to-design-md/agents`，作为该 skill 的 agent 元数据入口。
+# PROTOCOL: 一旦本文件被更新，务必同步更新 Header 与所属目录 `.folder.md`。
+interface:
+  display_name: "website-to-design-md"
+  short_description: "Deeply inspect a live website and write DESIGN.md"
+  default_prompt: "Use $website-to-design-md to inspect a live website with browser automation and generate a reusable DESIGN.md."
