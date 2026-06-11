@@ -97,6 +97,31 @@ npx plugins add /Users/wangwenbo/Desktop/demo/dev-bootstrap/plugins/kata-design
 npx plugins add pbakaus/impeccable
 ```
 
+## 更新与排查
+
+`skills` 与 `plugins` 是两套不同的安装体系，不要混用它们的命令来判断状态。
+
+- `npx skills list` 只列出通过 `npx skills add ...` 安装的独立 skills，不会列出 `kata-design` 这类 plugin 名称。
+- `npx skills update` 只更新通过 `skills` CLI 安装的 skill 源，不负责更新通过 `npx plugins add ...` 安装的 plugin。
+- `kata-design` 应通过 `npx plugins discover <repo-or-path>` 或目标 agent 的 plugin 缓存元数据来确认是否被识别。
+
+对 plugin 安装而言，实际更新通常由 source snapshot 或 git commit 驱动，而不是只看 `plugin.json` 的 `version` 字段。
+
+- 如果你是从 `6owen/kata` 这类 GitHub repo 安装，只有当远端仓库出现新的 commit，重新执行 `npx plugins add 6owen/kata` 才会拉到新快照。
+- 如果你只是修改了本地工作区文件或只 bump 了 `plugin.json.version`，但没有形成新的安装 source，`skills update` 不会感知到这些变更。
+- 本地开发调试时，优先直接安装本地 plugin 路径，例如 `npx plugins add /absolute/path/to/plugins/kata-design`，这样更容易验证当前工作区内容。
+
+排查顺序建议固定为：
+
+1. 用 `npx plugins discover <repo-or-path>` 确认 plugin 能被识别。
+2. 检查目标 agent 的 plugin 安装元数据，确认当前安装记录对应的 source 或 commit。
+3. 如果安装来源是远端 repo，先确认变更已经 commit 并 push。
+4. 重新执行 `npx plugins add <repo-or-path>`，不要用 `npx skills update` 代替 plugin 刷新。
+
+rm -rf ~/.claude/plugins/cache/6owen-kata/kata-design
+rm -rf ~/.codex/plugins/cache/6owen-kata/kata-design
+npx plugins add 6owen/kata -y
+
 ## 版本发布
 
 仓库根提供统一版本升级入口：

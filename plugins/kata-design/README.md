@@ -32,3 +32,13 @@ npx plugins add pbakaus/impeccable
 
 - `impeccable-integration`
 - `website-to-design-md`
+
+## Update Notes
+
+`kata-design` 是 plugin，不是独立 skill 集合名。
+
+- 不要指望 `npx skills list` 列出 `kata-design`。
+- 不要用 `npx skills update` 刷新 `kata-design` 的 plugin 安装。
+- 调试或刷新时，优先使用 `npx plugins discover ...` 与 `npx plugins add ...`。
+
+如果安装来源是 GitHub repo，刷新依据通常是新的 repo snapshot 或 git commit，而不只是 `plugin.json.version` 变化。
