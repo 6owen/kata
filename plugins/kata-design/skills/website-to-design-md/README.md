@@ -10,44 +10,44 @@
 
 # website-to-design-md
 
-Generate a reusable `design.md` / `DESIGN.md` from a live website, plus an HTML preview for reviewing the extracted design system.
+把实时网站抽取为可复用的 `design.md` / `DESIGN.md`，并生成一个用于审阅设计系统的 HTML 预览。
 
-This repository is packaged as an installable AI skill. Give the GitHub URL to a supported skill installer, or copy this folder into your local skills directory.
+这个目录已经按可安装 AI skill 的结构打包完成。你可以把 GitHub URL 提供给支持的 skill installer，或直接把这个文件夹复制到本地 skills 目录。
 
-## What It Does
+## 能力说明
 
-- Reads a live website with `agent-browser`.
-- Uses `agent-browser eval` to extract DOM structure, computed styles, CSS variables, stylesheet rules, visible text, and interaction states.
-- Produces a detailed Stitch-style `DESIGN.md`.
-- Produces a sibling HTML preview using the same design tokens documented in the markdown.
-- Captures light and dark theme modes when a site supports theme switching.
-- Avoids screenshot-first extraction. Screenshots are only a last-resort verification aid when explicitly requested or when DOM evidence is ambiguous.
+- 使用 `agent-browser` 读取实时网站。
+- 通过 `agent-browser eval` 提取 DOM 结构、computed styles、CSS variables、stylesheet rules、可见文本与交互状态。
+- 生成细致的 Stitch 风格 `DESIGN.md`。
+- 基于 markdown 中记录的同一套 design tokens 生成同目录 HTML 预览。
+- 当网站支持主题切换时，覆盖 light mode 与 dark mode。
+- 避免以截图为主的抽取流程。截图仅在用户明确要求，或 DOM 证据不足时，作为最后的校验手段。
 
-## Install From GitHub
+## 从 GitHub 安装
 
-After publishing this repository, users can install it from the GitHub URL with a skill installer that supports GitHub sources.
+发布到 GitHub 后，用户可以通过支持 GitHub 来源的 skill installer 直接安装。
 
-For Codex-style skill installers, the repository root contains `SKILL.md`, so the install path is the repository root:
+对于 Codex 风格的 skill installer，仓库根目录已经包含 `SKILL.md`，因此安装路径就是仓库根目录：
 
 ```bash
 python3 ~/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py --repo Paidax01/website-to-design-md --path .
 ```
 
-If your installer accepts a direct GitHub URL, provide the repository URL:
+如果你的 installer 支持直接传入 GitHub URL，可使用仓库地址：
 
 ```text
 https://github.com/Paidax01/website-to-design-md
 ```
 
-Restart your AI coding app after installation so the new skill is discovered.
+安装完成后，重启 AI coding app，让新 skill 被重新发现。
 
-## Requirements
+## 依赖要求
 
-This skill is designed to use `agent-browser` for all website reading.
+这个 skill 默认使用 `agent-browser` 完成所有网站读取工作。
 
-If `agent-browser` is missing, the skill should help install or expose it before extracting the site. It should not silently switch to Playwright, Chrome CLI, or screenshot-led extraction unless the user explicitly asks for a fallback.
+如果本机缺少 `agent-browser`，skill 应先帮助安装，或把它暴露到 `PATH`，然后再开始抽取。除非用户明确要求降级方案，否则不应静默切换到 Playwright、Chrome CLI 或以截图为主的提取方式。
 
-## Repository Layout
+## 目录结构
 
 ```text
 .
@@ -66,19 +66,19 @@ If `agent-browser` is missing, the skill should help install or expose it before
     └── render-design-preview.mjs
 ```
 
-## Usage
+## 使用方式
 
-Ask your AI coding agent:
+你可以这样请求 AI coding agent：
 
 ```text
 Use the website-to-design-md skill to extract https://example.com into design.md and design-preview.html.
 ```
 
-The output should include:
+输出通常应包含：
 
-- `design.md` or `DESIGN.md`
+- `design.md` 或 `DESIGN.md`
 - `design-preview.html`
 
-## Publishing Notes
+## 发布说明
 
-Before publishing publicly, choose and add an open-source license such as MIT, Apache-2.0, or another license that matches your intent.
+在公开发布前，请补充与你预期一致的开源许可证，例如 MIT、Apache-2.0 或其他合适的 license。

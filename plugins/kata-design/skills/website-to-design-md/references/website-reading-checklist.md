@@ -1,21 +1,31 @@
-# Website Reading Checklist
+<!--
+[INPUT]: 网站设计抽取前的检查项、观察维度与浏览器评估片段。
+[OUTPUT]: 面向 AI 代理的网站阅读检查清单。
+[POS]: 位于 `/plugins/kata-design/skills/website-to-design-md/references`，作为网站深读参考文档。
 
-Use this checklist when a website needs a deeper inspection pass before writing `DESIGN.md`.
+[PROTOCOL]:
+1. 一旦本文件被更新，务必同步更新 Header 与所属目录 `.folder.md`。
+2. 若检查维度、证据标准或示例代码变化，需同步更新上层 SKILL.md 与 references 目录说明。
+-->
 
-## 1. Browser-First Setup
+# 网站阅读检查清单
 
-- Open the live page in a browser automation tool.
-- Prefer a browser-eval workflow such as `agent-browser eval` or an equivalent host-native page-eval tool.
-- Inspect at least desktop and mobile.
-- Scroll from top to bottom once without taking notes, just to understand the page rhythm.
-- Scroll again slowly while collecting evidence.
-- In that second pass, gather rendered HTML, key node `outerHTML`, computed styles, CSS variables, readable stylesheet rules, and runtime state diffs from the browser.
-- Do not use screenshots as the primary evidence source when page evaluation is available.
-- Only use screenshots as a last-resort cross-check if the user explicitly asks for them or if DOM evidence is genuinely insufficient.
+当一个网站在编写 `DESIGN.md` 前需要更深入的检查时，使用这份清单。
 
-### Preferred Eval Sequence
+## 1. 浏览器优先准备
 
-Use this order whenever the browser tool supports JS evaluation:
+- 在浏览器自动化工具中打开实时页面。
+- 优先使用 `agent-browser eval` 或宿主环境原生支持的等价 page-eval 流程。
+- 至少检查 desktop 与 mobile 两个视口。
+- 先从上到下滚动一遍，不做记录，只建立对页面节奏的整体认识。
+- 再慢速滚动第二遍，同时收集证据。
+- 在第二遍中，从浏览器里提取 rendered HTML、关键节点 `outerHTML`、computed styles、CSS variables、可读 stylesheet rules 与运行时状态差异。
+- 当 page evaluation 可用时，不要把截图当作主证据来源。
+- 只有在用户明确要求，或 DOM 证据确实不足时，才把截图作为最后的交叉校验。
+
+### 推荐的 Eval 顺序
+
+当浏览器工具支持 JS evaluation 时，按这个顺序执行：
 
 1. open page
 2. wait for load and hydration
@@ -27,25 +37,25 @@ Use this order whenever the browser tool supports JS evaluation:
 8. extract visible text and CTA content
 9. extract hover, sticky, or expanded state changes through DOM or style diffs
 
-## 2. Page Topology
+## 2. 页面拓扑
 
-Record the page structure from top to bottom:
+按从上到下的顺序记录页面结构：
 
 - global header or announcement layer
-- hero
+- hero 区块
 - feature sections
 - social proof
-- pricing or plans
+- pricing 或 plans
 - FAQ
 - footer
 
-Note which parts are sticky, overlayed, or scroll-reactive.
+标出哪些部分是 sticky、overlayed 或会响应滚动。
 
-## 3. Design Tokens to Extract
+## 3. 需要提取的 Design Tokens
 
-Capture the repeated system, not one-off anomalies:
+重点记录可重复的系统，而不是一次性的孤立异常：
 
-- primary and secondary colors
+- 主色与次级色
 - surface colors
 - border colors
 - text colors
@@ -58,14 +68,14 @@ Capture the repeated system, not one-off anomalies:
 - background motifs
 - focus ring treatment
 - hover-state color deltas
-- whether borders are true borders, rings, or shadow-based outlines
-- whether the system uses a consistent radius ladder such as `6px`, `8px`, `12px`, `9999px`
-- whether type uses distinctive tracking, ligatures, uppercase, or monospace pairings
-- whether the site exposes reusable CSS variables or token naming patterns on `:root` or `body`
+- 边框到底是真实 border、ring，还是基于 shadow 的 outline
+- 系统是否采用一致的 radius 阶梯，例如 `6px`、`8px`、`12px`、`9999px`
+- 字体是否使用有辨识度的 tracking、ligatures、uppercase 或 monospace 搭配
+- 网站是否在 `:root` 或 `body` 上暴露了可复用的 CSS variables 或 token naming patterns
 
-## 4. Components to Inspect
+## 4. 需要检查的组件
 
-At minimum, inspect:
+至少检查以下组件：
 
 - nav items
 - CTA buttons
@@ -76,27 +86,27 @@ At minimum, inspect:
 - accordions
 - footer links
 
-For each component, note:
+对每个组件，记录：
 
-- default appearance
-- important states
-- content density
-- icon treatment
-- motion or transition feel
-- exact padding when practical
-- radius and shadow formula when those are signature details
-- whether the component is meant to feel structural, decorative, or utility-focused
-- representative rendered HTML so the component structure is not inferred only from visuals
+- 默认外观
+- 关键状态
+- 内容密度
+- 图标处理方式
+- 动效或过渡的整体感觉
+- 在可行时记录精确 padding
+- 当 radius 与 shadow 属于签名特征时，记录其具体公式
+- 组件更偏 structural、decorative 还是 utility-focused
+- 记录有代表性的 rendered HTML，避免只靠视觉推断组件结构
 
-## 5. Interaction Sweep
+## 5. 交互扫描
 
-Check all three classes of behavior:
+检查以下三类行为：
 
 - scroll-driven
 - hover-driven
 - click-driven
 
-Watch for:
+重点观察：
 
 - sticky headers
 - reveal-on-scroll blocks
@@ -105,71 +115,71 @@ Watch for:
 - animated counters
 - carousel timing
 - hover elevation
-- underline or color transitions
+- 下划线或颜色过渡
 
-## 6. Responsive Sweep
+## 6. 响应式扫描
 
-Inspect a few meaningful widths when possible:
+在条件允许时，至少检查几个有代表性的宽度：
 
-- desktop around `1440px`
-- tablet around `768px`
-- mobile around `390px`
+- desktop 约 `1440px`
+- tablet 约 `768px`
+- mobile 约 `390px`
 
-Record:
+记录：
 
-- breakpoint-driven stacking changes
+- 由 breakpoint 驱动的堆叠变化
 - typography compression
 - nav behavior changes
 - button sizing changes
-- hidden vs retained content
-- whether spacing scales down proportionally or is restructured more aggressively
-- whether pills and cards keep the same radius at smaller sizes
+- 哪些内容被隐藏，哪些内容被保留
+- spacing 是按比例缩小，还是会被更激进地重组
+- pills 与 cards 在更小尺寸下是否保持相同 radius
 
-## 7. Content and Voice
+## 7. 内容与语气
 
-Extract the presentation style:
+提取内容呈现风格：
 
 - headline length
 - verb choice
 - CTA tone
 - sentence cadence
-- whether copy is sparse or dense
-- whether the brand voice is premium, playful, technical, calm, urgent, or editorial
+- copy 是偏稀疏还是偏密集
+- brand voice 更偏 premium、playful、technical、calm、urgent 还是 editorial
 
-## 8. Evidence Notes
+## 8. 证据记录
 
-Be explicit about what is observed versus inferred.
+明确区分哪些是观察所得，哪些是推断所得。
 
-Examples:
+示例：
 
 - Observed: "Primary CTA buttons use a saturated emerald fill on very dark backgrounds."
 - Inferred: "The product prefers one strong accent color per section rather than multi-accent clustering."
 
-For signature details, collect the actual implementation-grade value when possible:
+对于有代表性的签名细节，尽量记录实际可落地的实现级数值：
 
-- line height and tracking on headline tiers
-- border radius on buttons, cards, images, and badges
-- multi-layer box-shadow stacks
-- border versus shadow-as-border treatment
-- focus ring colors and thickness
-- spacing values that appear repeatedly
-- root CSS variables and reusable token names
-- key node `outerHTML` and accessible stylesheet rules for representative modules
+- headline 层级上的 line height 与 tracking
+- buttons、cards、images、badges 的 border radius
+- 多层 box-shadow 叠加
+- border 与 shadow-as-border 的处理差异
+- focus ring 的颜色与厚度
+- 反复出现的 spacing 数值
+- root CSS variables 与可复用 token 名称
+- 关键节点的 `outerHTML` 与代表性模块可访问的 stylesheet rules
 
-## 9. Richness Check
+## 9. 信息充分性检查
 
-Before writing the final `DESIGN.md`, ask:
+在开始写最终 `DESIGN.md` 前，先问自己：
 
-- Can I describe the site's identity in design philosophy language, not just tokens?
-- Do I know enough to write a full hierarchy table, not just "large / medium / small"?
-- Do I know how cards and buttons are actually built?
-- Could I give another agent 3 concrete build prompts that would reproduce this system?
+- 我能否用设计哲学层面的语言描述这个网站，而不只是罗列 tokens？
+- 我是否已经掌握足够信息，能写出完整的 hierarchy table，而不只是“large / medium / small”？
+- 我是否清楚 cards 和 buttons 实际是如何构建出来的？
+- 我是否能给另一个 agent 3 条足够具体的 build prompt，复现这套系统？
 
-If not, inspect the page again before writing.
+如果这些问题还答不上来，就先回到页面继续检查，再开始写。
 
-## 10. Useful Browser Snippets
+## 10. 实用浏览器代码片段
 
-Use these only if your browser tool supports evaluating JavaScript on the page.
+仅在你的浏览器工具支持在页面上执行 JavaScript 时使用这些片段。
 
 ### Root CSS variables
 

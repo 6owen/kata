@@ -4,12 +4,12 @@ description: Scaffold a new pnpm + Vite + React single-app project from the `6ow
 ---
 
 <!--
-[INPUT]: AI 任务上下文、目标项目根目录、`starter-react` 模板可用性、初始化或迁移模式、可选脚本参数。
+[INPUT]: AI 任务上下文、目标项目根目录、`starter-react` 模板可用性、初始化或迁移模式、可选脚本参数、页面路由与样式约定。
 [OUTPUT]: 给 AI 的运行协议，以及对目标项目应用 `starter-react` 基线的明确步骤。
 [POS]: 位于 /plugins/kata-code/skills/starter-react，作为该 skill 的机器可读入口。
 
 [PROTOCOL]:
-1. 一旦 skill 工作流、模板来源、脚本参数或结构契约变化，必须同步更新此 Header。
+1. 一旦 skill 工作流、模板来源、脚本参数、页面路由约定或结构契约变化，必须同步更新此 Header。
 2. 更新后必须上浮检查本目录 `.folder.md`、`README.md`、`scripts/` 与 `references/` 说明是否依然准确。
 -->
 
@@ -36,21 +36,23 @@ Apply the `6owen/starter-react` baseline to a single-app frontend project.
    - keep business logic and page behavior intact
    - reorganize files into the template ownership model instead of doing a cosmetic rename only
    - backfill missing baseline files from the template where needed
+   - align route pages to the template pattern: root-level `src/pages/*.tsx` for direct entries, directory pages via `src/pages/**/page.tsx`
    - avoid wholesale overwrite when the existing app already contains real product logic
 6. Do not use the init script on an existing app:
    - if the target already contains `package.json`, `src/`, or Vite app markers, treat it as migrate mode
    - for migrate work, use the script only as a source of baseline files, not as a blind overwrite tool
 7. Use the structure contract consistently:
-   - `src/pages`: file-based page entries only
+   - `src/pages`: route pages only; root-level `.tsx` files generate routes directly, directory pages use `page.tsx`
+   - `src/pages/**/components`: page-private components; do not promote to global reuse by default
    - `src/routers`: route assembly, guards, route meta, layout wiring, not-found, custom routes
    - `src/layouts`: page shells
    - `src/stores/modules`: Zustand modules
    - `src/services`: Axios instance, request helpers, API exports
    - `src/setups`: boot-time one-shot initialization
-   - `src/styles`: global CSS layers only
+   - `src/styles`: global CSS layers only; do not dump component-private styles here
    - `src/typings`: generated declarations and hand-written app declarations
    - `src/composables`: shared hooks
-   - `src/components`: business components and UI primitives
+   - `src/components`: cross-page reusable components and UI primitives only
    - `src/libs`: low-level utilities such as `cn`
 8. Keep the baseline stack aligned:
    - `pnpm`
@@ -84,6 +86,11 @@ Apply the `6owen/starter-react` baseline to a single-app frontend project.
 - This skill is intentionally `pnpm`-only.
 - This skill targets single-app Vite React projects, not Next.js, Remix, Expo, Electron, or SSR-first stacks.
 - The bundled script is optimized for `init` mode. Migration remains a guided refactor because existing product code should not be flattened by an automatic copy step.
-- Prefer Tailwind utility styling for components; keep standalone CSS files for global layers such as theme variables, scrollbar styling, and cross-page transitions.
+- Route generation follows two patterns only: `src/pages/*.tsx` for direct pages, and `src/pages/**/page.tsx` for directory pages.
+- Prefer page-local decomposition first: use `src/pages/**/components` for page-private pieces, and only promote stable cross-page reuse into `src/components`.
+- Prefer Tailwind utility styling for components.
+- Prefer theme tokens such as `bg-background`, `text-muted-foreground`, and `border-border` over hard-coded visual values.
+- Avoid custom CSS for component-private styling; if CSS is truly necessary, colocate it with the component instead of pushing it into `src/styles`.
+- Keep standalone CSS files in `src/styles` for global layers such as theme variables, scrollbar styling, and cross-page transitions.
 - `src/typings/auto-imports.d.ts` is generated output; regenerate it rather than hand-maintaining it unless there is a concrete reason.
 - If the repo already uses the Arvinn toolchain, keep that configuration consistent instead of duplicating competing lint or format setups.

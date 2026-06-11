@@ -10,7 +10,7 @@
 
 # starter-react
 
-Use `6owen/starter-react` as the baseline for new Vite + React single-app projects, or as the target structure when normalizing an existing single-package frontend.
+Use `6owen/starter-react` as the baseline for new Vite + React single-app projects, or as the target structure when normalizing an existing single-package frontend, including `page.tsx` directory routes, page-private `components/`, and token-first Tailwind styling.
 
 Quick init entry: `scripts/apply-starter-react.mjs`
 
