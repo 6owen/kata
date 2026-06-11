@@ -12,3 +12,4 @@
 
 This directory stores the distilled contract for `6owen/starter-react`.
 When the upstream README or directory structure changes, sync `template-contract.md` first.
+When the vendored Vercel React companion usage changes, sync `react-best-practices.md`.

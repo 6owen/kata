@@ -37,6 +37,13 @@ export const vendors: Record<string, VendorSkillMeta> = {
       impeccable: 'impeccable',
     },
   },
+  'vercel-agent-skills': {
+    source: 'https://github.com/vercel-labs/agent-skills',
+    plugin: 'kata-code',
+    skills: {
+      'vercel-react-best-practices': 'react-best-practices',
+    },
+  },
 }
 
 /* ==========================================================================

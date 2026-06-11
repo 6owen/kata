@@ -13,6 +13,7 @@
 This directory tracks third-party skills as git submodules.
 
 - `vendor/impeccable`: external companion skill source used by `kata-design`
+- `vendor/vercel-agent-skills`: Vercel Labs skill source used by `kata-code/starter-react` as a React best-practices companion reference
 
 Vendored repositories remain upstream-owned. Kata only defines integration, routing, and local workflow constraints around them.
 
@@ -32,6 +33,7 @@ If you want to inspect the code for a vendored repository, initialize it explici
 
 ```bash
 git submodule update --init vendor/impeccable
+git submodule update --init vendor/vercel-agent-skills
 ```
 
 If you want to initialize every vendored repository:
@@ -46,4 +48,5 @@ If you no longer want the vendored source checked out locally, deinitialize it a
 
 ```bash
 git submodule deinit -f vendor/impeccable
+git submodule deinit -f vendor/vercel-agent-skills
 ```

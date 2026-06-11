@@ -64,7 +64,7 @@
 - `kata-governance`：把 AI 治理规则安装到新仓库里的 bootstrap plugin。
 - `kata-test`：测试能力预留骨架，后续补充 skill。
 
-仓库不内置所有配置包。已有独立维护的配置仓库继续作为外部依赖使用，例如 [6owen/eslint-config](https://github.com/6owen/eslint-config) 与 [6owen/prettier-config](https://github.com/6owen/prettier-config)。第三方 skill 则通过 `vendor/ + .gitmodules + meta.ts` 接入。
+仓库不内置所有配置包。已有独立维护的配置仓库继续作为外部依赖使用，例如 [6owen/eslint-config](https://github.com/6owen/eslint-config) 与 [6owen/prettier-config](https://github.com/6owen/prettier-config)。第三方 skill 则通过 `vendor/ + .gitmodules + meta.ts` 接入，例如 `vendor/impeccable` 与 `vendor/vercel-agent-skills`。
 
 根级开发工具额外使用 [@clack/prompts](https://github.com/bombshell-dev/clack) 作为 CLI 交互组件，使用 [picocolors](https://github.com/alexeyraspopov/picocolors) 与 [sisteransi](https://github.com/terkelg/sisteransi) 处理终端颜色和 ANSI 输出，并用 [bumpp](https://github.com/antfu-collective/bumpp) 统一维护根包与各 plugin 的版本号。
 
@@ -124,7 +124,7 @@ pnpm bump:local
 - `project-toolchain`：为 `pnpm` JavaScript/TypeScript 项目接入 `@arvinn/eslint-config`、`@arvinn/prettier-config`、`@arvinn/vscode-settings`、`lint-staged`、`simple-git-hooks`。
 - `pnpm-monorepo`：初始化或迁移为 `pnpm` monorepo，建立 `apps/*`、`packages/*` 与 `apps/web` 默认前端应用目录。
 - `express-modular`：生成 Express + TypeScript 的模块化后端骨架，采用 `controller / service / model / routes` 结构。
-- `starter-react`：以 `6owen/starter-react` 为基线初始化新的 Vite React 单应用，内置一条 init 命令，也可把现有单体前端收敛到同一套目录、路由、状态与请求层结构。
+- `starter-react`：以 `6owen/starter-react` 为基线初始化新的 Vite React 单应用，内置一条 init 命令，也可把现有单体前端收敛到同一套目录、路由、状态与请求层结构，并引用 vendored `react-best-practices` 作为 React 性能 companion。
 - `tailwind-iconify`：接入 Tailwind CSS v4 + Iconify 图标工作流。
 
 ### `kata-design`
@@ -151,6 +151,7 @@ kata/
     web/
   vendor/
     impeccable/
+    vercel-agent-skills/
   meta.ts
   plugins/
     kata-code/

@@ -1,3 +1,14 @@
+# [INPUT]: `vendor/` 下 submodule 来源、路径映射与上游仓库变更。
+# [OUTPUT]: Git submodule 路径声明，供仓库检出第三方 vendor 源。
+# [POS]: 位于仓库根目录，作为 vendored 上游仓库的 Git 映射入口。
+#
+# [PROTOCOL]:
+# 1. 一旦 submodule 来源、路径或名称变化，必须同步更新此 Header。
+# 2. 更新后必须上浮检查 /vendor/.folder.md、/vendor/README.md、/meta.ts 与 /README.md 的描述是否依然准确。
+
 [submodule "vendor/impeccable"]
 	path = vendor/impeccable
 	url = https://github.com/pbakaus/impeccable
+[submodule "vendor/vercel-agent-skills"]
+	path = vendor/vercel-agent-skills
+	url = https://github.com/vercel-labs/agent-skills
