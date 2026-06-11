@@ -73,7 +73,7 @@
 安装整个插件仓库：
 
 ```bash
-npx plugins add pinky-pig/kata
+npx plugins add 6owen/kata
 ```
 
 安装单个 plugin：

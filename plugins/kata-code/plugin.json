@@ -3,10 +3,10 @@
   "description": "Code generation and engineering workflow skills for pnpm toolchains, monorepos, React/Vite starter baselines, backend structure, and frontend implementation preferences.",
   "version": "0.1.3",
   "author": {
-    "name": "pinky-pig"
+    "name": "6owen"
   },
-  "homepage": "https://github.com/pinky-pig/kata",
-  "repository": "https://github.com/pinky-pig/kata",
+  "homepage": "https://github.com/6owen/kata",
+  "repository": "https://github.com/6owen/kata",
   "license": "MIT",
   "keywords": [
     "kata",
