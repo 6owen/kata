@@ -48,7 +48,7 @@
 - `apps/`：宿主应用目录；放浏览器扩展与 Web 应用等示例或承载应用。
 - `interaction/`：交互资产预留目录；当前为空但受统一治理协议管理。
 - `plugins/`：一方 plugin 集合目录；承载 `kata-*` 插件实现与骨架。
-- `vendor/`：三方来源目录；通过 submodule 或引用方式接入上游资产。
+- `vendor/`：三方来源目录；通过 submodule 或引用方式接入上游资产，默认保持“只登记引用、未初始化工作树”的引用态。
 
 ## 文档输出路径
 
@@ -65,6 +65,8 @@
 - `kata-test`：测试能力预留骨架，后续补充 skill。
 
 仓库不内置所有配置包。已有独立维护的配置仓库继续作为外部依赖使用，例如 [6owen/eslint-config](https://github.com/6owen/eslint-config) 与 [6owen/prettier-config](https://github.com/6owen/prettier-config)。第三方 skill 则通过 `vendor/ + .gitmodules + meta.ts` 接入，例如 `vendor/impeccable` 与 `vendor/vercel-agent-skills`。
+
+对 `vendor/*` submodule，仓库约定的默认状态是“只登记引用、未初始化工作树”。执行 `git submodule status` 时，记录前面的 `-` 就表示该目录仍处于这种正确默认状态，本地没有真实上游内容被 checkout 出来。
 
 根级开发工具额外使用 [@clack/prompts](https://github.com/bombshell-dev/clack) 作为 CLI 交互组件，使用 [picocolors](https://github.com/alexeyraspopov/picocolors) 与 [sisteransi](https://github.com/terkelg/sisteransi) 处理终端颜色和 ANSI 输出，并用 [bumpp](https://github.com/antfu-collective/bumpp) 统一维护根包与各 plugin 的版本号。
 

@@ -80,4 +80,7 @@
 ## Safety
 
 - 不要修改 `vendor/impeccable` 这类上游拥有的 submodule 内容，除非任务明确要求维护其上游副本。
+- `vendor/` 下的第三方仓库默认必须保持“只登记引用、未初始化工作树”的 submodule 状态，不应把上游真实内容长期 checkout 在本地。
+- `git submodule status` 前缀为 `-` 时，表示该 submodule 仅登记引用、尚未初始化工作树；这正是 `vendor/impeccable`、`vendor/vercel-agent-skills` 这类目录的预期默认状态。
+- 如果新增了 `vendor/*` submodule，完成登记后应立即执行 `git submodule deinit -f <path>`，恢复为引用态；除非当前任务明确要求临时查看或维护其上游源码。
 - 如果目录说明与真实代码不符，优先修正文档，但不要用文档掩盖实现偏差；需要同时指出或修复偏差。
