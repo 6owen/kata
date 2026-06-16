@@ -1,7 +1,7 @@
 {
   "name": "kata-design",
   "description": "Design workflow orchestration skills for Kata, with external companion integration for impeccable.",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "author": {
     "name": "6owen"
   },
