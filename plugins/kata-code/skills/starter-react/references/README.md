@@ -1,5 +1,5 @@
 <!--
-[INPUT]: `starter-react` 的补充参考资料来源与使用边界。
+[INPUT]: `starter-react` 的补充参考资料来源、TanStack Start 模板契约与使用边界。
 [OUTPUT]: references 目录的人类说明与使用边界。
 [POS]: 位于 /plugins/kata-code/skills/starter-react/references，作为模板参考资料层入口文档。
 
@@ -10,6 +10,6 @@
 
 # starter-react references
 
-This directory stores the distilled contract for `6owen/starter-react`.
+This directory stores the distilled contract for `6owen/starter-react`, including the TanStack Start route model and the vendored React companion boundary.
 When the upstream README or directory structure changes, sync `template-contract.md` first.
 When the vendored Vercel React companion usage changes, sync `react-best-practices.md`.

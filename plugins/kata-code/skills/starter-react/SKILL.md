@@ -1,15 +1,15 @@
 ---
 name: starter-react
-description: Scaffold a new pnpm + Vite + React single-app project from the `6owen/starter-react` baseline, or refactor an existing single-package frontend to match its directory structure, routing, Zustand stores, services, styles, typings, and Arvinn toolchain conventions. Use when the target is a Vite React app rather than Next.js, Remix, Expo, or SSR frameworks.
+description: Scaffold a new single-app TanStack Start + React project from the `6owen/starter-react` baseline, or refactor an existing single-package frontend to match its `src/pages` route groups, `route.tsx` and `index.tsx` file routing, page-local `-components`, `services`, `stores`, `setups`, and token-first Tailwind conventions. Use when the target should converge to this Vite-based React baseline rather than Next.js, Remix, Expo, or other non-matching app frameworks.
 ---
 
 <!--
-[INPUT]: AI 任务上下文、目标项目根目录、`starter-react` 模板可用性、初始化或迁移模式、可选脚本参数、页面路由与样式约定、可选 vendored React companion source。
+[INPUT]: AI 任务上下文、目标项目根目录、`starter-react` 模板可用性、初始化或迁移模式、可选脚本参数、TanStack Start 路由约定、页面私有共置规则、样式与数据层约定、可选 vendored React companion source。
 [OUTPUT]: 给 AI 的运行协议，以及对目标项目应用 `starter-react` 基线的明确步骤。
 [POS]: 位于 /plugins/kata-code/skills/starter-react，作为该 skill 的机器可读入口。
 
 [PROTOCOL]:
-1. 一旦 skill 工作流、模板来源、脚本参数、页面路由约定、React companion reference 或结构契约变化，必须同步更新此 Header。
+1. 一旦 skill 工作流、模板来源、脚本参数、TanStack Start 路由约定、React companion reference 或结构契约变化，必须同步更新此 Header。
 2. 更新后必须上浮检查本目录 `.folder.md`、`README.md`、`scripts/` 与 `references/` 说明是否依然准确。
 -->
 
@@ -40,38 +40,46 @@ Apply the `6owen/starter-react` baseline to a single-app frontend project.
    - keep business logic and page behavior intact
    - reorganize files into the template ownership model instead of doing a cosmetic rename only
    - backfill missing baseline files from the template where needed
-   - align route pages to the template pattern: root-level `src/pages/*.tsx` for direct entries, directory pages via `src/pages/**/page.tsx`
+   - align route pages to the template pattern: `src/pages/__root.tsx` at the root, `src/pages/**/route.tsx` for route-group shells and guards, `src/pages/**/index.tsx` for leaf pages
+   - move page-local implementation next to the route that owns it: `-components/`, `-schema.ts`, `-queries.ts`, `-form.ts`, `-columns.tsx`, `-utils.ts`
+   - keep route-group shells inside their own `route.tsx`; do not reintroduce a detached `src/layouts` layer or a generic `src/features` split
    - avoid wholesale overwrite when the existing app already contains real product logic
 7. Do not use the init script on an existing app:
    - if the target already contains `package.json`, `src/`, or Vite app markers, treat it as migrate mode
    - for migrate work, use the script only as a source of baseline files, not as a blind overwrite tool
 8. Use the structure contract consistently:
-   - `src/pages`: route pages only; root-level `.tsx` files generate routes directly, directory pages use `page.tsx`
-   - `src/pages/**/components`: page-private components; do not promote to global reuse by default
-   - `src/routers`: route assembly, guards, route meta, layout wiring, not-found, custom routes
-   - `src/layouts`: page shells
-   - `src/stores/modules`: Zustand modules
-   - `src/services`: Axios instance, request helpers, API exports
+   - `src/pages`: TanStack file-route root only; `__root.tsx` owns the root document and global providers, `route.tsx` owns route-group shells and guards, `index.tsx` owns leaf pages, and `-`-prefixed files stay out of route generation
+   - `_app`, `_auth`, `_immersive`, `_authed`, `_admin` style directories are route-group boundaries, not URL path segments
+   - `src/pages/**/-components`: page-private or route-group-private components; keep leaf-page components in the leaf page directory, and only keep shared shell pieces at the route-group root
+   - `src/routers`: route helper logic such as auth snapshots and guards, not the primary route source of truth
+   - `src/stores`: Zustand client-local state only; do not use it as a server-cache substitute
+   - `src/services`: Axios instance, request helpers, Query client factory, API exports, and future remote clients
    - `src/setups`: boot-time one-shot initialization
    - `src/styles`: global CSS layers only; do not dump component-private styles here
    - `src/typings`: generated declarations and hand-written app declarations
    - `src/composables`: shared hooks
    - `src/components`: cross-page reusable components and UI primitives only
-   - `src/libs`: low-level utilities such as `cn`
+   - `src/lib`: preferred low-level utilities such as `cn`
+   - `src/libs`: compatibility re-export only when the template still carries it
+   - do not add `src/features`; the template organizes around route ownership, not feature buckets
 9. Keep the baseline stack aligned:
    - `pnpm`
-   - `Node >= 20`
+   - `Node >= 22.12.0`
+   - `TanStack Start`
+   - `TanStack Router`
+   - `TanStack Query`
    - `React 19`
    - `Vite 8`
-   - `TypeScript`
-   - `React Router DOM 6`
-   - `vite-plugin-pages`
-   - `unplugin-auto-import`
+   - `TypeScript 6`
    - `Zustand`
    - `Axios`
    - `react-use`
    - `shadcn/ui`
    - `Tailwind CSS v4`
+   - `@tailwindcss/vite`
+   - `@tanstack/router-cli`
+   - `zod`
+   - `@egoist/tailwindcss-icons`
    - `Iconify`
    - `lucide-react`
    - `@arvinn/eslint-config`
@@ -81,6 +89,7 @@ Apply the `6owen/starter-react` baseline to a single-app frontend project.
    - `simple-git-hooks`
 10. After scaffolding or migration, verify with:
    - `pnpm install`
+   - `pnpm generate-routes`
    - `pnpm lint`
    - `pnpm typecheck`
    - `pnpm build`
@@ -88,16 +97,20 @@ Apply the `6owen/starter-react` baseline to a single-app frontend project.
 ## Notes
 
 - This skill is intentionally `pnpm`-only.
-- This skill targets single-app Vite React projects, not Next.js, Remix, Expo, Electron, or SSR-first stacks.
+- This skill targets a single-app TanStack Start + Vite React baseline, not Next.js, Remix, Expo, Electron, or unrelated SSR-first stacks.
 - The bundled script is optimized for `init` mode. Migration remains a guided refactor because existing product code should not be flattened by an automatic copy step.
 - The vendored Vercel companion is a reference source, not a replacement for Kata's own directory, route, and styling conventions.
 - For `starter-react`, prioritize upstream React rules from `rerender-*`, `bundle-*`, `async-*`, `rendering-*`, `client-*`, and `advanced-*` when they fit the task.
-- Treat upstream `server-*` and Next.js-specific guidance as conditional; only apply it when the target project actually introduces those runtime patterns.
-- Route generation follows two patterns only: `src/pages/*.tsx` for direct pages, and `src/pages/**/page.tsx` for directory pages.
-- Prefer page-local decomposition first: use `src/pages/**/components` for page-private pieces, and only promote stable cross-page reuse into `src/components`.
+- Treat upstream `server-*` and SSR-oriented guidance as conditional; only apply it when the work actually touches TanStack Start server functions, SSR query integration, caching, or equivalent runtime patterns.
+- Route generation follows the template's TanStack pattern: `src/pages/__root.tsx` for the root document, `src/pages/**/route.tsx` for route groups, and `src/pages/**/index.tsx` for leaf pages.
+- Keep `tsr.config.json` and `vite.config.ts` aligned on `src/pages`, `routeFileIgnorePrefix: '-'`, and `src/routeTree.gen.ts`.
+- Prefer page-local decomposition first: use `src/pages/**/-components` for page-private pieces, and only promote stable cross-page reuse into `src/components`.
 - Prefer Tailwind utility styling for components.
 - Prefer theme tokens such as `bg-background`, `text-muted-foreground`, and `border-border` over hard-coded visual values.
 - Avoid custom CSS for component-private styling; if CSS is truly necessary, colocate it with the component instead of pushing it into `src/styles`.
 - Keep standalone CSS files in `src/styles` for global layers such as theme variables, scrollbar styling, and cross-page transitions.
-- `src/typings/auto-imports.d.ts` is generated output; regenerate it rather than hand-maintaining it unless there is a concrete reason.
+- `src/services` owns remote communication, while `src/stores` owns client-local interaction state. Do not shift server data fetching and cache state into Zustand.
+- `src/layouts` is not part of this baseline; keep page shells and guard boundaries in the owning `route.tsx`.
+- `src/features` is not part of this baseline.
+- `src/routeTree.gen.ts` is generated output; regenerate it rather than hand-editing it.
 - If the repo already uses the Arvinn toolchain, keep that configuration consistent instead of duplicating competing lint or format setups.

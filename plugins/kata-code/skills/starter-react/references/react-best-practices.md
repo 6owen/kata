@@ -42,7 +42,7 @@
 
 这些规则不是 `starter-react` 默认强约束，只在目标项目确实进入对应模式时再启用：
 
-- `server-*`：服务端缓存、RSC、SSR、序列化等
+- `server-*`：服务端缓存、SSR、序列化、server function 等
 - 明显依赖 Next.js 运行时的规则
 - 面向 API route / server action 的规则
 
@@ -51,10 +51,12 @@
 `react-best-practices` 提供的是 React/Next 性能与实现建议。
 `starter-react` 仍然拥有这些本地约束的最终解释权：
 
-- `src/pages/*.tsx` 与 `src/pages/**/page.tsx` 的路由结构
-- `src/pages/**/components` 作为页面私有组件目录
+- `src/pages/__root.tsx`、`src/pages/**/route.tsx`、`src/pages/**/index.tsx` 的路由结构
+- `src/pages/**/-components` 作为页面或路由分组私有组件目录
 - `src/components` 只承载跨页面稳定复用组件
 - `Tailwind + theme token` 优先的样式策略
 - `src/styles` 只承载全局样式层
+- `src/services` 负责远端通信，`src/stores` 只负责客户端本地状态
+- 不引入独立的 `src/layouts` 或 `src/features`
 
 如果上游某条规则和本地目录/样式所有权冲突，优先保留 Kata 的结构约束，再吸收不冲突的性能建议。

@@ -151,7 +151,7 @@ pnpm bump:local
 - `project-toolchain`：为 `pnpm` JavaScript/TypeScript 项目接入 `@arvinn/eslint-config`、`@arvinn/prettier-config`、`@arvinn/vscode-settings`、`lint-staged`、`simple-git-hooks`。
 - `pnpm-monorepo`：初始化或迁移为 `pnpm` monorepo，建立 `apps/*`、`packages/*` 与 `apps/web` 默认前端应用目录。
 - `express-modular`：生成 Express + TypeScript 的模块化后端骨架，采用 `controller / service / model / routes` 结构。
-- `starter-react`：以 `6owen/starter-react` 为基线初始化新的 Vite React 单应用，内置一条 init 命令，也可把现有单体前端收敛到同一套目录、路由、状态与请求层结构，并引用 vendored `react-best-practices` 作为 React 性能 companion。
+- `starter-react`：以 `6owen/starter-react` 为基线初始化新的 TanStack Start + Vite React 单应用，内置一条 init 命令，也可把现有单体前端收敛到同一套 `src/pages + route.tsx/index.tsx + services/stores/setups` 结构，并引用 vendored `react-best-practices` 作为 React 性能 companion。
 - `tailwind-iconify`：接入 Tailwind CSS v4 + Iconify 图标工作流。
 
 ### `kata-design`

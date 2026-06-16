@@ -11,6 +11,7 @@
 # kata-code
 
 `kata-code` 承载代码工程相关 skill，包括工具链接入、monorepo 结构、后端模块化骨架，以及 Vite React 单应用的 starter 基线与实现层依赖偏好。
+其中 `starter-react` 当前对齐的是 `6owen/starter-react` 的 TanStack Start 基线：`src/pages` 文件路由、`route.tsx` 路由分组壳子、`index.tsx` 叶子页面，以及 `services` / `stores` / `setups` 的职责分层。
 
 这里不会镜像或内置你已经独立维护的配置仓库。像 `@arvinn/eslint-config`、`@arvinn/prettier-config` 这类能力继续从外部仓库和包源消费。
 对于 React 实现细节与性能约束，`starter-react` 还会引用 vendored `vendor/vercel-agent-skills/skills/react-best-practices` 作为 companion reference，但不会把上游规则内容直接并入 Kata 本体。
