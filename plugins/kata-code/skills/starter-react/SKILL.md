@@ -1,15 +1,15 @@
 ---
 name: starter-react
-description: Scaffold a new single-app TanStack Start + React project from the `6owen/starter-react` baseline, or refactor an existing single-package frontend to match its `src/pages` route groups, `route.tsx` and `index.tsx` file routing, page-local `-components`, `services`, `stores`, `setups`, and token-first Tailwind conventions. Use when the target should converge to this Vite-based React baseline rather than Next.js, Remix, Expo, or other non-matching app frameworks.
+description: Scaffold a new single-app TanStack Start + React project from the `6owen/starter-react` baseline, or refactor an existing single-package frontend to match its `src/pages` route groups, `route.tsx` and `index.tsx` file routing, page-local `-components`, `services`, `stores`, `setups`, token-first Tailwind conventions, and `shadcn/ui` design-system workflow. Use when the target should converge to this Vite-based React baseline rather than Next.js, Remix, Expo, or other non-matching app frameworks.
 ---
 
 <!--
-[INPUT]: AI 任务上下文、目标项目根目录、`starter-react` 模板可用性、初始化或迁移模式、可选脚本参数、TanStack Start 路由约定、页面私有共置规则、样式与数据层约定、可选 vendored React companion source。
+[INPUT]: AI 任务上下文、目标项目根目录、`starter-react` 模板可用性、初始化或迁移模式、可选脚本参数、TanStack Start 路由约定、页面私有共置规则、`shadcn/ui` 设计系统约定、样式与数据层约定、可选 vendored React companion source。
 [OUTPUT]: 给 AI 的运行协议，以及对目标项目应用 `starter-react` 基线的明确步骤。
 [POS]: 位于 /plugins/kata-code/skills/starter-react，作为该 skill 的机器可读入口。
 
 [PROTOCOL]:
-1. 一旦 skill 工作流、模板来源、脚本参数、TanStack Start 路由约定、React companion reference 或结构契约变化，必须同步更新此 Header。
+1. 一旦 skill 工作流、模板来源、脚本参数、TanStack Start 路由约定、`shadcn/ui` 设计系统约定、React companion reference 或结构契约变化，必须同步更新此 Header。
 2. 更新后必须上浮检查本目录 `.folder.md`、`README.md`、`scripts/` 与 `references/` 说明是否依然准确。
 -->
 
@@ -87,7 +87,28 @@ Apply the `6owen/starter-react` baseline to a single-app frontend project.
    - `@arvinn/vscode-settings`
    - `lint-staged`
    - `simple-git-hooks`
-10. After scaffolding or migration, verify with:
+10. When the task includes page delivery, marketing surfaces, app chrome, or component showcase work, establish `shadcn/ui` as the active design system before composing the page:
+   - initialize with `npx shadcn@latest init`
+   - use `Style: Default`
+   - choose the base color per project instead of inventing a parallel palette
+   - keep `CSS variables: Yes`
+   - reuse the existing `jsconfig.json` / `tsconfig.json` alias configuration
+   - install the shared theme with `npx shadcn@latest add https://tweakcn.com/r/themes/amethyst-haze.json`
+   - install components in batches to avoid CLI timeout; keep each batch to roughly six items:
+     - core interaction: `npx shadcn@latest add button input label card dialog sheet`
+     - forms: `npx shadcn@latest add form select checkbox radio-group switch textarea`
+     - feedback: `npx shadcn@latest add alert sonner badge skeleton progress`
+     - navigation: `npx shadcn@latest add tabs accordion dropdown-menu navigation-menu`
+     - display: `npx shadcn@latest add avatar table popover tooltip hover-card`
+     - utilities: `npx shadcn@latest add scroll-area separator command collapsible`
+     - on demand only: `npx shadcn@latest add slider toggle toggle-group menubar context-menu aspect-ratio`
+   - in this baseline, the generic `src/index.css` role is served by `src/styles/tailwind.css`; keep `@import "tailwindcss";` there instead of creating a competing CSS entry unless the project already requires one
+   - keep generated primitives in `src/components/ui` and the `cn` helper in `src/lib/utils.ts`
+   - prefer a router-backed showcase route such as `src/pages/_app/design-system/index.tsx`, or the active route-group equivalent, when the app needs a design-system gallery
+   - build `header`, `hero`, and `footer` from design-system colors, tokens, and `shadcn/ui` components such as `Button`, `Card`, `Sheet`, `NavigationMenu`, `Tabs`, `Accordion`, `Badge`, and `Separator`
+   - put a router-driven `DesignSystem` entry in the header via TanStack Router `Link`
+   - **All design must come from design-system colors and components.** Do not introduce ad hoc palettes, hard-coded surface colors, or one-off primitives unless the task explicitly expands the design system first
+11. After scaffolding or migration, verify with:
    - `pnpm install`
    - `pnpm generate-routes`
    - `pnpm lint`
@@ -107,8 +128,10 @@ Apply the `6owen/starter-react` baseline to a single-app frontend project.
 - Prefer page-local decomposition first: use `src/pages/**/-components` for page-private pieces, and only promote stable cross-page reuse into `src/components`.
 - Prefer Tailwind utility styling for components.
 - Prefer theme tokens such as `bg-background`, `text-muted-foreground`, and `border-border` over hard-coded visual values.
+- Generic shadcn guides may mention `src/index.css` and `App.jsx`; in this baseline, translate those to `src/styles/tailwind.css` and the relevant TanStack route entries instead of adding a parallel app shell.
 - Avoid custom CSS for component-private styling; if CSS is truly necessary, colocate it with the component instead of pushing it into `src/styles`.
 - Keep standalone CSS files in `src/styles` for global layers such as theme variables, scrollbar styling, and cross-page transitions.
+- When the user asks for a polished page and no other system is specified, default to a `header + hero + footer` composition built from `shadcn/ui` and expose a router-backed `DesignSystem` showcase page from the header.
 - `src/services` owns remote communication, while `src/stores` owns client-local interaction state. Do not shift server data fetching and cache state into Zustand.
 - `src/layouts` is not part of this baseline; keep page shells and guard boundaries in the owning `route.tsx`.
 - `src/features` is not part of this baseline.

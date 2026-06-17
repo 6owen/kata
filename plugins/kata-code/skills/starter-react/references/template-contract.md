@@ -1,10 +1,10 @@
 <!--
-[INPUT]: `6owen/starter-react` 上游 README、`package.json`、TanStack Start 路由配置、目录结构与依赖清单。
+[INPUT]: `6owen/starter-react` 上游 README、`package.json`、TanStack Start 路由配置、目录结构、`shadcn/ui` 设计系统约定与依赖清单。
 [OUTPUT]: 供 AI 复用的模板契约快照、技术栈摘要与迁移对齐规则。
 [POS]: 位于 /plugins/kata-code/skills/starter-react/references，作为该 skill 的结构参考主文档。
 
 [PROTOCOL]:
-1. 一旦上游模板 README、`package.json`、目录结构、TanStack Start 路由约定或依赖基线变化，必须同步更新此 Header。
+1. 一旦上游模板 README、`package.json`、目录结构、TanStack Start 路由约定、`shadcn/ui` 设计系统约定或依赖基线变化，必须同步更新此 Header。
 2. 更新后必须上浮检查本目录 `.folder.md`、`README.md` 与上层 `SKILL.md` 的描述是否依然准确。
 -->
 
@@ -42,6 +42,30 @@
 - 校验：`zod`
 - Git 规范：`lint-staged` + `simple-git-hooks`
 
+## Shadcn Design System Workflow
+
+当任务需要交付页面 UI 时，把 `shadcn/ui` 视为默认设计系统：
+
+1. 初始化：
+   - `npx shadcn@latest init`
+   - `Style: Default`
+   - `Base color`: 按项目选择
+   - `CSS variables: Yes`
+   - 路径别名沿用现有 `jsconfig.json` / `tsconfig.json`
+2. 安装共享主题：
+   - `npx shadcn@latest add https://tweakcn.com/r/themes/amethyst-haze.json`
+3. 分批安装组件，避免 CLI 超时：
+   - 核心交互：`npx shadcn@latest add button input label card dialog sheet`
+   - 表单：`npx shadcn@latest add form select checkbox radio-group switch textarea`
+   - 反馈：`npx shadcn@latest add alert sonner badge skeleton progress`
+   - 导航：`npx shadcn@latest add tabs accordion dropdown-menu navigation-menu`
+   - 展示：`npx shadcn@latest add avatar table popover tooltip hover-card`
+   - 工具：`npx shadcn@latest add scroll-area separator command collapsible`
+   - 按需：`npx shadcn@latest add slider toggle toggle-group menubar context-menu aspect-ratio`
+
+组件安装与页面开发阶段都要遵守这条硬规则：
+**一切设计必须来自设计系统的颜色和组件。**
+
 ## Root File Contract
 
 初始化或迁移后，根层通常应具备这些关键文件：
@@ -71,6 +95,7 @@
 `src/` 采用明确分层，避免把职责揉在一起：
 
 - `components/`：确认需要跨页面复用的组件与 UI 组件
+- `components/ui/`：`shadcn/ui` 生成的基础组件与设计系统原语
 - `composables/`：共享 hooks
 - `lib/`：当前推荐的纯工具目录
 - `libs/`：兼容目录，当前只做 re-export
@@ -96,6 +121,7 @@
 - `src/pages/**/route.tsx`：路由分组边界、共享壳子、守卫与 `Outlet`
 - `src/pages/**/index.tsx`：具体叶子页面入口
 - `_app`、`_auth`、`_immersive`、`_authed`、`_admin` 这类 `_` 前缀目录主要表示路由分组边界，而不是 URL 片段
+- 需要设计系统展示页时，优先在当前 app shell 下使用类似 `src/pages/_app/design-system/index.tsx` 的路由
 - `routeFileIgnorePrefix` 固定为 `-`
 - `src/pages/**/-components/*`、`-navigation.ts`、`-schema.ts`、`-queries.ts`、`-form.ts`、`-columns.tsx`、`-utils.ts` 都不会参与路由生成
 - 页面应优先就地拆分，只有跨页面稳定复用后才提升到 `src/components`
@@ -106,7 +132,7 @@
 - `vite.config.ts`：Vite + TanStack Start 插件入口，必须与 `tsr.config.json` 保持同一套路由配置
 - `tsr.config.json`：固定 `routesDirectory: ./src/pages`、`generatedRouteTree: ./src/routeTree.gen.ts`、`routeFileIgnorePrefix: -`
 - `src/router.tsx`：Router 创建与 Query 集成入口
-- `src/styles/tailwind.css`：Tailwind、shadcn、Iconify、主题变量入口
+- `src/styles/tailwind.css`：Tailwind、shadcn、Iconify、主题变量入口；在本基线中承担通用 Vite 教程里 `src/index.css` 的角色，并应保留 `@import "tailwindcss";`
 - `src/styles/global.css`：全局样式总入口
 - `src/styles/scrollbar.css`：滚动条样式
 - `src/styles/view-transition-api.css`：主题切换动效样式
@@ -118,14 +144,22 @@
 - `src/lib/utils.ts`：当前推荐的 `cn` 工具入口
 - `src/libs/utils.ts`：兼容 re-export
 - `src/setups/theme.ts`：首屏主题初始化
+- `src/pages/_app/design-system/index.tsx`：推荐的设计系统展示页路由，用于组件、token 和主题状态演示
 
 ## Styling Rules
 
 - 组件样式优先使用 `Tailwind CSS`
 - 优先使用主题 token，例如 `bg-background`、`text-muted-foreground`、`border-border`
+- 所有页面视觉都应优先取自设计系统 token 与 `shadcn/ui` 组件，不要额外发明独立颜色体系
 - 尽量不要写死颜色、阴影、边框等视觉值
 - 尽量不写自定义 CSS，也不要把组件私有样式堆进 `src/styles`
 - 如果组件确实需要独立 CSS，优先和组件同目录共置
+
+## UI Delivery Rules
+
+- 当页面需要 `header`、`hero`、`footer` 时，优先由 `Button`、`Card`、`Sheet`、`NavigationMenu`、`Tabs`、`Accordion`、`Badge`、`Separator` 等设计系统组件组合而成
+- `header` 中应放置 router 驱动的 `DesignSystem` 展示页入口，通常使用 TanStack Router `Link`
+- 如果现有设计系统无法满足需求，先扩展 token 或组件封装，再回到页面实现，不要直接在页面里写一次性视觉规则
 
 ## State And Data Rules
 
@@ -151,6 +185,7 @@
 - 启动初始化逻辑移入 `src/setups`
 - 纯工具优先落到 `src/lib`
 - 全局样式沉到 `src/styles`
+- `header`、`hero`、`footer` 若存在，优先重构为设计系统组件组合，而不是保留一次性 DOM + CSS 拼装
 - 组件私有 CSS 与组件同目录共置，不要塞进 `src/styles`
 - 类型声明收敛到 `src/typings`
 
