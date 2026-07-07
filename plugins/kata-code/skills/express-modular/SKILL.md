@@ -33,6 +33,22 @@ Apply a modules-first Express + TypeScript server structure.
 - `src/modules/*` (controller/service/model/routes per module)
 - `src/tests/{unit,integration,manual}`
 
+## API conventions (enforced by the scaffold)
+
+- **Response envelope**: every response is normalized via `src/common/utils/response.ts`.
+  - Success: `{ code, message, result, success: true, timestamp }` (`createSuccessResponse` / `ok`).
+  - Error: `{ code, message, success: false, timestamp }` (`createErrorResponse`).
+  - Paginated: `result` is a `PageResult<T>` `{ current, pages, records, size, total }`
+    (`toPageResult` / `okPage`). `handle()` wraps whatever the service returns, so a
+    service returning a `PageResult` yields a paginated envelope automatically.
+  - `normalizeJsonResponse` coerces legacy `{ success, data }` / raw bodies into the envelope.
+- **HTTP methods**: reads use `GET`, mutations use `POST`. `PUT` and `DELETE` are never used.
+- **Endpoint naming**: NOT RESTful-by-path. The last path segment is a full camelCase
+  action name including the entity, so it stays unique in browser devtools:
+  `GET /api/user/getUserList`, `GET /api/user/getUserById`, `POST /api/user/createUser`,
+  `POST /api/user/updateUserById`, `POST /api/user/deleteUserById`.
+- Modules mount at `/api/<module>`; each action name already carries the entity, so it never collides.
+
 ## Notes
 
 - This skill is intentionally `pnpm`-only.
@@ -40,3 +56,5 @@ Apply a modules-first Express + TypeScript server structure.
 - Re-running is idempotent: existing files are kept unless missing.
 - Existing JavaScript source files are not auto-converted to TypeScript.
 - New modules follow `<name>.controller.ts / <name>.service.ts / <name>.model.ts / <name>.routes.ts`.
+- Verified against Express 5 (`req.query` is read-only there — the scaffold validates via
+  `schema.safeParse(req.query)` inside handlers instead of reassigning `req.query`).

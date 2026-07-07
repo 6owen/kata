@@ -2,7 +2,9 @@
 
 /*
 [INPUT]: 目标项目根目录、pnpm 环境、现有 package.json、可选模块名参数。
-[OUTPUT]: 对目标项目安装 Express TypeScript 依赖，并生成模块化后端基础结构与样板文件。
+[OUTPUT]: 对目标项目安装 Express TypeScript 依赖，并生成模块化后端骨架与样板文件；
+         内置约定：归一化响应 envelope（含分页 PageResult）、GET 读 / POST 写（禁用 PUT/DELETE）、
+         非 RESTful 的小驼峰全名接口路径（如 getUserList、deleteUserById）。
 [POS]: 位于 /plugins/kata-code/skills/express-modular/scripts，作为 express-modular skill 的执行入口。
 
 [PROTOCOL]:
@@ -174,7 +176,8 @@ app.get('/health', (_req, res) => {
 
 // module routes example:
 // import userRouter from './modules/user/user.routes.js'
-// app.use('/api/users', userRouter)
+// app.use('/api/user', userRouter)
+// endpoints are named actions, e.g. POST /api/user/getUserList, POST /api/user/deleteUserById
 
 app.use(notFoundHandler)
 app.use(errorHandler)
@@ -215,6 +218,7 @@ export class NotFoundError extends AppError {
     'src/common/errors/index.ts': `export * from './app-error.js'
 `,
     'src/common/handler/handle.ts': `import type { Request, Response, NextFunction } from 'express'
+import { createSuccessResponse } from '../utils/index.js'
 
 type Handler<T = unknown> = (req: Request) => Promise<T> | T
 
@@ -223,17 +227,15 @@ type HandleOptions = {
   message?: string
 }
 
+// Wrap a handler so its return value becomes a standard success envelope.
+// Return a PageResult (via toPageResult / okPage in the service) for paginated data.
 export function handle<T>(handler: Handler<T>, options: HandleOptions = {}) {
-  const { status = 200, message } = options
+  const { status = 200, message = '' } = options
 
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       const data = await handler(req)
-      res.status(status).json({
-        success: true,
-        message,
-        data,
-      })
+      res.status(status).json(createSuccessResponse(data, { message }))
     } catch (error) {
       next(error)
     }
@@ -258,6 +260,7 @@ export function authMiddleware(req: AuthenticatedRequest, _res: Response, next: 
 `,
     'src/common/middleware/error-handler.ts': `import type { NextFunction, Request, Response } from 'express'
 import { AppError } from '../errors/index.js'
+import { createErrorResponse } from '../utils/index.js'
 
 export function notFoundHandler(_req: Request, _res: Response, next: NextFunction) {
   next(new AppError('Route not found', 404, 'NOT_FOUND'))
@@ -265,30 +268,173 @@ export function notFoundHandler(_req: Request, _res: Response, next: NextFunctio
 
 export function errorHandler(error: unknown, _req: Request, res: Response, _next: NextFunction) {
   if (error instanceof AppError) {
-    res.status(error.statusCode).json({
-      success: false,
+    res.status(error.statusCode).json(createErrorResponse({
       code: error.code,
       message: error.message,
-    })
+    }))
     return
   }
 
-  res.status(500).json({
-    success: false,
+  res.status(500).json(createErrorResponse({
     code: 'INTERNAL_SERVER_ERROR',
     message: 'Internal server error',
-  })
+  }))
 }
 `,
     'src/common/middleware/index.ts': `export * from './auth.js'
 export * from './error-handler.js'
 `,
-    'src/common/utils/response.ts': `export function ok<T>(data: T, message?: string) {
+    'src/common/utils/response.ts': `/*
+[INPUT]: 任意 JSON 响应业务数据、HTTP 状态码、消息文本与错误码。
+[OUTPUT]: 标准响应 envelope 构造、分页构造、识别与归一化工具。
+[POS]: 位于 src/common/utils，作为基础响应工具函数定义文件。
+[PROTOCOL]: 一旦我被更新，务必更新我的开头注释，以及所属文件夹的 md。
+*/
+
+type SuccessResponseOptions = {
+  code?: number
+  message?: string
+  timestamp?: number
+}
+
+type ErrorResponseOptions = {
+  code: string
+  message: string
+  timestamp?: number
+}
+
+type JsonRecord = Record<string, unknown>
+
+export type PageResult<T> = {
+  current: number
+  pages: number
+  records: T[]
+  size: number
+  total: number
+}
+
+export type PageMeta = {
+  current: number
+  size: number
+  total: number
+}
+
+export function createSuccessResponse<T>(
+  result: T,
+  options: SuccessResponseOptions = {},
+) {
+  const { code = 200, message = '', timestamp = Date.now() } = options
+
   return {
-    success: true,
+    code,
     message,
-    data,
+    result,
+    success: true,
+    timestamp,
   }
+}
+
+export function createErrorResponse(options: ErrorResponseOptions) {
+  const { code, message, timestamp = Date.now() } = options
+
+  return {
+    code,
+    message,
+    success: false,
+    timestamp,
+  }
+}
+
+export function toPageResult<T>(records: T[], meta: PageMeta): PageResult<T> {
+  const { current, size, total } = meta
+
+  return {
+    current,
+    pages: size > 0 ? Math.ceil(total / size) : 0,
+    records,
+    size,
+    total,
+  }
+}
+
+function isJsonRecord(value: unknown): value is JsonRecord {
+  return Boolean(value) && typeof value === 'object' && !Array.isArray(value)
+}
+
+function hasOwn(value: JsonRecord, key: string) {
+  return Object.prototype.hasOwnProperty.call(value, key)
+}
+
+function resolveMessage(value: unknown) {
+  return typeof value === 'string' ? value : ''
+}
+
+function resolveSuccessCode(value: unknown, fallback: number) {
+  return typeof value === 'number' ? value : fallback
+}
+
+function resolveErrorCode(value: unknown, fallback: number) {
+  return typeof value === 'string' ? value : String(fallback)
+}
+
+export function normalizeJsonResponse(body: unknown, statusCode = 200) {
+  if (!isJsonRecord(body)) {
+    return createSuccessResponse(body, { code: statusCode })
+  }
+
+  if (body.success === false) {
+    return createErrorResponse({
+      code: resolveErrorCode(body.code, statusCode),
+      message: resolveMessage(body.message),
+      timestamp:
+        typeof body.timestamp === 'number' ? body.timestamp : undefined,
+    })
+  }
+
+  if (body.success === true && hasOwn(body, 'result')) {
+    return createSuccessResponse(body.result, {
+      code: resolveSuccessCode(body.code, statusCode),
+      message: resolveMessage(body.message),
+      timestamp:
+        typeof body.timestamp === 'number' ? body.timestamp : undefined,
+    })
+  }
+
+  if (body.success === true && hasOwn(body, 'data')) {
+    return createSuccessResponse(body.data, {
+      code: resolveSuccessCode(body.code, statusCode),
+      message: resolveMessage(body.message),
+      timestamp:
+        typeof body.timestamp === 'number' ? body.timestamp : undefined,
+    })
+  }
+
+  return createSuccessResponse(body, { code: statusCode })
+}
+
+export function ok<T>(
+  result: T,
+  messageOrOptions: string | SuccessResponseOptions = {},
+) {
+  const options =
+    typeof messageOrOptions === 'string'
+      ? { message: messageOrOptions }
+      : messageOrOptions
+
+  return createSuccessResponse(result, options)
+}
+
+export function okPage<T>(
+  records: T[],
+  meta: PageMeta,
+  messageOrOptions: string | SuccessResponseOptions = {},
+) {
+  const options =
+    typeof messageOrOptions === 'string'
+      ? { message: messageOrOptions }
+      : messageOrOptions
+
+  return createSuccessResponse(toPageResult(records, meta), options)
 }
 `,
     'src/common/utils/index.ts': `export * from './response.js'
@@ -383,11 +529,163 @@ async function scaffoldModule(moduleName) {
 
   const pascal = toClassName(module)
 
+  const modelContent = `import { z } from 'zod'
+
+export const ${module}ListQuerySchema = z.object({
+  current: z.coerce.number().int().min(1).default(1),
+  size: z.coerce.number().int().min(1).max(100).default(10),
+})
+
+export const ${module}IdSchema = z.object({
+  id: z.string().min(1),
+})
+
+export const create${pascal}Schema = z.object({
+  name: z.string().min(1),
+})
+
+export const update${pascal}Schema = z.object({
+  id: z.string().min(1),
+  name: z.string().min(1).optional(),
+})
+
+export type ${pascal}ListQuery = z.infer<typeof ${module}ListQuerySchema>
+export type ${pascal}IdInput = z.infer<typeof ${module}IdSchema>
+export type Create${pascal}Input = z.infer<typeof create${pascal}Schema>
+export type Update${pascal}Input = z.infer<typeof update${pascal}Schema>
+`
+
+  const serviceContent = `import { toPageResult, type PageResult } from '../../common/utils/index.js'
+import type {
+  ${pascal}ListQuery,
+  Create${pascal}Input,
+  Update${pascal}Input,
+} from './${module}.model.js'
+
+export type ${pascal} = {
+  id: string
+  name: string
+}
+
+const items: ${pascal}[] = []
+
+export async function get${pascal}List(query: ${pascal}ListQuery): Promise<PageResult<${pascal}>> {
+  const { current, size } = query
+  const start = (current - 1) * size
+  const records = items.slice(start, start + size)
+  return toPageResult(records, { current, size, total: items.length })
+}
+
+export async function get${pascal}ById(id: string): Promise<${pascal} | null> {
+  return items.find(item => item.id === id) ?? null
+}
+
+export async function create${pascal}(input: Create${pascal}Input): Promise<${pascal}> {
+  const item: ${pascal} = { id: crypto.randomUUID(), ...input }
+  items.push(item)
+  return item
+}
+
+export async function update${pascal}ById(input: Update${pascal}Input): Promise<${pascal} | null> {
+  const item = items.find(entry => entry.id === input.id)
+  if (!item)
+    return null
+  Object.assign(item, input)
+  return item
+}
+
+export async function delete${pascal}ById(id: string): Promise<{ id: string }> {
+  const index = items.findIndex(item => item.id === id)
+  if (index >= 0)
+    items.splice(index, 1)
+  return { id }
+}
+`
+
+  const controllerContent = `import { Router } from 'express'
+import { z } from 'zod'
+import { handle } from '../../common/handler/index.js'
+import { BadRequestError, NotFoundError } from '../../common/errors/index.js'
+import {
+  ${module}ListQuerySchema,
+  ${module}IdSchema,
+  create${pascal}Schema,
+  update${pascal}Schema,
+} from './${module}.model.js'
+import {
+  get${pascal}List,
+  get${pascal}ById,
+  create${pascal},
+  update${pascal}ById,
+  delete${pascal}ById,
+} from './${module}.service.js'
+
+const router = Router()
+
+function parse<T>(schema: z.ZodType<T>, data: unknown): T {
+  const result = schema.safeParse(data)
+  if (!result.success)
+    throw new BadRequestError(result.error.issues[0]?.message || 'Validation failed')
+  return result.data
+}
+
+// Convention: reads use GET, mutations use POST. PUT and DELETE are never used.
+// Each endpoint's last path segment is a full camelCase action name (e.g.
+// get${pascal}List, delete${pascal}ById) so it stays unique and readable in devtools.
+router.get('/get${pascal}List', handle(async (req) => {
+  const query = parse(${module}ListQuerySchema, req.query)
+  return get${pascal}List(query)
+}))
+
+router.get('/get${pascal}ById', handle(async (req) => {
+  const { id } = parse(${module}IdSchema, req.query)
+  const found = await get${pascal}ById(id)
+  if (!found)
+    throw new NotFoundError('${module} not found')
+  return found
+}))
+
+router.post('/create${pascal}', handle(async (req) => {
+  const input = parse(create${pascal}Schema, req.body)
+  return create${pascal}(input)
+}, { status: 201, message: '${module} created' }))
+
+router.post('/update${pascal}ById', handle(async (req) => {
+  const input = parse(update${pascal}Schema, req.body)
+  const updated = await update${pascal}ById(input)
+  if (!updated)
+    throw new NotFoundError('${module} not found')
+  return updated
+}, { message: '${module} updated' }))
+
+router.post('/delete${pascal}ById', handle(async (req) => {
+  const { id } = parse(${module}IdSchema, req.body)
+  return delete${pascal}ById(id)
+}, { message: '${module} deleted' }))
+
+export default router
+`
+
+  const readmeContent = `# ${module}
+
+${module} feature module.
+
+## Endpoints (GET reads / POST writes, no PUT/DELETE)
+
+| Method | Path | Action |
+|--------|------|--------|
+| GET | /api/${module}/get${pascal}List | paginated list |
+| GET | /api/${module}/get${pascal}ById | single record |
+| POST | /api/${module}/create${pascal} | create |
+| POST | /api/${module}/update${pascal}ById | update |
+| POST | /api/${module}/delete${pascal}ById | delete |
+`
+
   const files = {
-    [`${moduleDir}/README.md`]: `# ${module}\n\n${module} feature module.\n`,
-    [`${moduleDir}/${module}.model.ts`]: `import { z } from 'zod'\n\nexport const create${pascal}Schema = z.object({\n  name: z.string().min(1),\n})\n\nexport type Create${pascal}Input = z.infer<typeof create${pascal}Schema>\n`,
-    [`${moduleDir}/${module}.service.ts`]: `import type { Create${pascal}Input } from './${module}.model.js'\n\nexport async function list${pascal}Items() {\n  return []\n}\n\nexport async function create${pascal}Item(input: Create${pascal}Input) {\n  return { id: crypto.randomUUID(), ...input }\n}\n`,
-    [`${moduleDir}/${module}.controller.ts`]: `import { Router } from 'express'\nimport { z } from 'zod'\nimport { handle } from '../../common/handler/index.js'\nimport { BadRequestError } from '../../common/errors/index.js'\nimport { create${pascal}Schema, type Create${pascal}Input } from './${module}.model.js'\nimport { list${pascal}Items, create${pascal}Item } from './${module}.service.js'\n\nconst router = Router()\n\nfunction validate(schema: z.ZodTypeAny) {\n  return (req: any, _res: any, next: any) => {\n    try {\n      req.body = schema.parse(req.body)\n      next()\n    } catch (error: any) {\n      next(new BadRequestError(error.errors?.[0]?.message || 'Validation failed'))\n    }\n  }\n}\n\nrouter.get('/', handle(async () => list${pascal}Items()))\n\nrouter.post('/', validate(create${pascal}Schema), handle(async (req) => {\n  return create${pascal}Item(req.body as Create${pascal}Input)\n}, { status: 201, message: '${module} created' }))\n\nexport default router\n`,
+    [`${moduleDir}/README.md`]: readmeContent,
+    [`${moduleDir}/${module}.model.ts`]: modelContent,
+    [`${moduleDir}/${module}.service.ts`]: serviceContent,
+    [`${moduleDir}/${module}.controller.ts`]: controllerContent,
     [`${moduleDir}/${module}.routes.ts`]: `import router from './${module}.controller.js'\n\nexport default router\n`,
   }
 

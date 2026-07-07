@@ -13,4 +13,12 @@
 Set up an Express + TypeScript server with modules-first architecture:
 `controller + service + model + routes`.
 
+Opinionated API conventions baked into the scaffold:
+
+- Normalized response envelope (`{ code, message, result, success, timestamp }`), with a
+  paginated `PageResult` variant — see `src/common/utils/response.ts`.
+- GET for reads, POST for writes; PUT and DELETE are never used.
+- Non-RESTful endpoint names: the last path segment is a full camelCase action
+  (`getUserList`, `deleteUserById`), so calls stay distinguishable in devtools.
+
 Main entry: `SKILL.md`
