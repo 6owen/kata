@@ -18,9 +18,9 @@
 
 通用规则源码位于 `rules/`：
 
-- `general.md`：跨项目通用的 AI 工作规则
+- `general.md`：跨项目通用的 AI 工作规则，含范式复用清单与品味自检
 - `frontend.md`：前端样式与 token 复用相关规则
-- `repo-docs.md`：仓库文档同步、Header 协议与输出路径规则
+- `repo-docs.md`：三层文档结构、同步协议、回环工作流、违规分级、Header 协议与输出路径规则
 
 ## Bootstrap Output
 
